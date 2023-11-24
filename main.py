@@ -9,18 +9,18 @@ from Algorithms.Algorithm_Factory import Algorithm_Factory
 
 from Problems.Problem_Factory import Problem_Factory
 
-from General_Utils.Args_Utils import printParameters, argsPreprocessing, argsFileCreation
-from General_Utils.Management_Utils import folderInitialization, executionTimeFileInitialization, writeInExecutionTimeFile, writeResultsInCsvFile, savePlots
+from General_Utils.Args_Utils import print_parameters, args_preprocessing, args_file_creation
+from General_Utils.Management_Utils import folder_initialization, execution_time_file_initialization, write_in_execution_time_file, write_results_in_csv_file, save_plots
 from General_Utils.Pareto_Utils import pointsInitialization, pointsPostprocessing
 from General_Utils.Progress_Bar import Progress_Bar
 
-from parser_management import getArgs
+from parser_management import get_args
 
 tf.compat.v1.disable_eager_execution()
 
-args = getArgs()
-printParameters(args)
-algorithms_names, prob_settings, general_settings, algorithms_settings, DDS_settings, ALS_settings, Ref_settings, sparsity_settings = argsPreprocessing(args)
+args = get_args()
+print_parameters(args)
+algorithms_names, prob_settings, general_settings, algorithms_settings, DDS_settings, ALS_settings, Ref_settings, sparsity_settings = args_preprocessing(args)
 
 if prob_settings['prob_type'] == 'QP':
     assert len(prob_settings['dat_prob_paths']) == 1
@@ -53,9 +53,9 @@ for seed in general_settings['seeds']:
     print('Seed:', str(seed))
 
     if general_settings['general_export']:
-        folderInitialization(seed, date, algorithms_names)
-        argsFileCreation(date, seed, args)
-        executionTimeFileInitialization(seed, date, algorithms_names)
+        folder_initialization(seed, date, algorithms_names)
+        args_file_creation(date, seed, args)
+        execution_time_file_initialization(seed, date, algorithms_names)
 
     for L in prob_settings['L']:
         print()
@@ -117,9 +117,9 @@ for seed in general_settings['seeds']:
                             graphical_plot.closeFigure()
 
                         if general_settings['general_export']:
-                            writeInExecutionTimeFile(seed, date, algorithm_name, problem_instance, elapsed_time)
-                            writeResultsInCsvFile(filtered_p_list, filtered_f_list, seed, date, algorithm_name, problem_instance, export_pareto_solutions=general_settings['export_pareto_solutions'])
-                            savePlots(filtered_p_list, filtered_f_list, seed, date, algorithm_name, problem_instance, general_settings['export_pareto_solutions'], general_settings['plot_dpi'])
+                            write_in_execution_time_file(seed, date, algorithm_name, problem_instance, elapsed_time)
+                            write_results_in_csv_file(filtered_p_list, filtered_f_list, seed, date, algorithm_name, problem_instance, export_pareto_solutions=general_settings['export_pareto_solutions'])
+                            save_plots(filtered_p_list, filtered_f_list, seed, date, algorithm_name, problem_instance, general_settings['export_pareto_solutions'], general_settings['plot_dpi'])
 
                         if general_settings['verbose']:
                             progress_bar.incrementCurrentValue()
