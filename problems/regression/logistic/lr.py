@@ -3,7 +3,7 @@ from sklearn.datasets import load_svmlight_file
 from sklearn.preprocessing import StandardScaler
 import tensorflow as tf
 
-from problems.Problem import Problem
+from problems.problem import Problem
 
 
 class LR(Problem):

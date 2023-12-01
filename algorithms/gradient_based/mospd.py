@@ -1,7 +1,7 @@
 import time
 import numpy as np
 
-from algorithms.gradient_based.Gradient_Based_Algorithm import Gradient_Based_Algorithm
+from algorithms.gradient_based.gradient_based_algorithm import Gradient_Based_Algorithm
 from algorithms.gradient_based.Refiner.Refiner_MOPG import Refiner_MOPG
 from problems.PenaltyFunction.MOPF import MOPF
 

@@ -3,13 +3,13 @@ import scipy
 import random
 import numpy as np
 
-from algorithms.algorithm_utils.Selection_Strategy import Spread_Selection_Strategy
-from algorithms.gradient_based.Gradient_Based_Algorithm import Gradient_Based_Algorithm
+from algorithms.algorithm_utils.selection_strategy import Spread_Selection_Strategy
+from algorithms.gradient_based.gradient_based_algorithm import Gradient_Based_Algorithm
 
-from direction_solvers.Direction_Solver_Factory import Direction_Descent_Factory
-from line_searches.Line_Search_Factory import Line_Search_Factory
+from direction_solvers.direction_solver_factory import Direction_Descent_Factory
+from line_searches.line_search_factory import Line_Search_Factory
 
-from general_utils.Pareto_Utils import paretoEfficient
+from general_utils.pareto_utils import paretoEfficient
 
 
 class Refiner_FPGA(Gradient_Based_Algorithm):

@@ -2,7 +2,7 @@ import numpy as np
 from gurobipy import Model, GRB, GurobiError
 
 from direction_solvers.L_DS.L_DS import L_DS
-from direction_solvers.Gurobi_Settings import Gurobi_Settings
+from direction_solvers.gurobi_settings import Gurobi_Settings
 
 
 class L_DS_GurobiVersion(L_DS, Gurobi_Settings):

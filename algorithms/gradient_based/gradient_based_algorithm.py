@@ -4,8 +4,8 @@ from itertools import chain, combinations
 
 from algorithms.Algorithm import Algorithm
 
-from direction_solvers.Direction_Solver_Factory import Direction_Descent_Factory
-from line_searches.Line_Search_Factory import Line_Search_Factory
+from direction_solvers.direction_solver_factory import Direction_Descent_Factory
+from line_searches.line_search_factory import Line_Search_Factory
 
 
 class Gradient_Based_Algorithm(Algorithm, ABC):

@@ -2,7 +2,7 @@ import numpy as np
 from gurobipy import Model, GRB
 
 from direction_solvers.MOPGD.MOPGD import MOPGD
-from direction_solvers.Gurobi_Settings import Gurobi_Settings
+from direction_solvers.gurobi_settings import Gurobi_Settings
 
 
 class MOPGD_GurobiVersion(MOPGD, Gurobi_Settings):

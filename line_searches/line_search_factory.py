@@ -1,5 +1,5 @@
 from line_searches.armijo_type.F_MOALS import F_MOALS
-from line_searches.armijo_type.MOALS import MOALS
+from line_searches.armijo_type.moals import MOALS
 
 
 class Line_Search_Factory:

@@ -1,8 +1,8 @@
 import time
 import numpy as np
 
-from algorithms.gradient_based.Gradient_Based_Algorithm import Gradient_Based_Algorithm
-from algorithms.gradient_based.Refiner_MOPG import Refiner_MOPG
+from algorithms.gradient_based.gradient_based_algorithm import Gradient_Based_Algorithm
+from algorithms.gradient_based.refiner_mopg import Refiner_MOPG
 
 
 class MOIHT(Gradient_Based_Algorithm):

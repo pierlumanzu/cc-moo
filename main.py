@@ -5,14 +5,14 @@ import glob
 import os
 
 from algorithms.algorithm_utils.Graphical_Plot import Graphical_Plot
-from algorithms.Algorithm_Factory import Algorithm_Factory
+from algorithms.algorithm_factory import Algorithm_Factory
 
-from problems.Problem_Factory import Problem_Factory
+from problems.problem_factory import Problem_Factory
 
-from general_utils.Args_Utils import print_parameters, args_preprocessing, args_file_creation
-from general_utils.Management_Utils import folder_initialization, execution_time_file_initialization, write_in_execution_time_file, write_results_in_csv_file, save_plots
-from general_utils.Pareto_Utils import pointsInitialization, pointsPostprocessing
-from general_utils.Progress_Bar import Progress_Bar
+from general_utils.args_utils import print_parameters, args_preprocessing, args_file_creation
+from general_utils.management_utils import folder_initialization, execution_time_file_initialization, write_in_execution_time_file, write_results_in_csv_file, save_plots
+from general_utils.pareto_utils import pointsInitialization, pointsPostprocessing
+from general_utils.progress_bar import Progress_Bar
 
 from parser_management import get_args
 

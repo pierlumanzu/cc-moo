@@ -1,6 +1,6 @@
-from direction_solvers.descent_direction.L_DS_GurobiVersion import L_DS_GurobiVersion
-from direction_solvers.descent_direction.BF_GurobiVersion import BF_GurobiVersion
-from direction_solvers.descent_direction.MOPGD_GurobiVersion import MOPGD_GurobiVersion
+from direction_solvers.descent_direction.l_ds_gurobi_version import L_DS_GurobiVersion
+from direction_solvers.descent_direction.bf_gurobi_version import BF_GurobiVersion
+from direction_solvers.descent_direction.mopgd_gurobi_version import MOPGD_GurobiVersion
 
 
 class Direction_Descent_Factory:
