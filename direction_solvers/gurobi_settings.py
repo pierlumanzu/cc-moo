@@ -1,6 +1,9 @@
-class Gurobi_Settings:
+from nsma.direction_solvers.gurobi_settings import GurobiSettings
 
-    def __init__(self, gurobi_verbose, gurobi_feas_tol, gurobi_method=None):
-        self._gurobi_verbose = gurobi_verbose
-        self._gurobi_feas_tol = gurobi_feas_tol
-        self._gurobi_method = gurobi_method if gurobi_method is not None else -1
+
+class ExtendedGurobiSettings(GurobiSettings):
+
+    def __init__(self, gurobi_method, gurobi_verbose, gurobi_feasibility_tol):
+
+        GurobiSettings.__init__(self, gurobi_method, gurobi_verbose)
+        self._gurobi_feasibility_tol = gurobi_feasibility_tol

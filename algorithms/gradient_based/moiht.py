@@ -1,17 +1,22 @@
 import time
 import numpy as np
 
-from algorithms.gradient_based.gradient_based_algorithm import Gradient_Based_Algorithm
-from algorithms.gradient_based.refiner_mopg import Refiner_MOPG
+from algorithms.gradient_based.extended_gradient_based_algorithm import ExtendedGradientBasedAlgorithm
 
 
-class MOIHT(Gradient_Based_Algorithm):
+class MOIHT(ExtendedGradientBasedAlgorithm):
 
-    def __init__(self, max_iter, max_time, max_f_evals, verbose, verbose_interspace, plot_pareto_front, plot_pareto_solutions, plot_dpi, sparse_tol, theta_for_stationarity, Gurobi_verbose, Gurobi_method, Gurobi_feas_tol, ALS_settings, Ref_settings):
+    def __init__(self,
+                 max_iter, max_time, max_f_evals,
+                 verbose, verbose_interspace,
+                 plot_pareto_front, plot_pareto_solutions, plot_dpi,
+                 theta_tol,
+                 gurobi_method, gurobi_verbose, gurobi_feasibility_tol,
+                 Gurobi_verbose, Gurobi_method, Gurobi_feas_tol, ALS_settings, Ref_settings):
 
         Gradient_Based_Algorithm.__init__(self,
                                           max_iter, max_time, max_f_evals, verbose, verbose_interspace, plot_pareto_front, plot_pareto_solutions, plot_dpi,
-                                          theta_for_stationarity,
+                                          theta_tol,
                                           Gurobi_verbose,
                                           Gurobi_feas_tol,
                                           name_DDS='L_DS')
@@ -20,7 +25,7 @@ class MOIHT(Gradient_Based_Algorithm):
 
         self.__sparse_tol = sparse_tol
 
-        self._refiner = Refiner_MOPG(Ref_settings['MOPG']['theta_for_stationarity'],
+        self._refiner = Refiner_MOPG(Ref_settings['MOPG']['theta_tol'],
                                      max_time,
                                      sparse_tol,
                                      Gurobi_verbose,
@@ -45,7 +50,7 @@ class MOIHT(Gradient_Based_Algorithm):
             J = problem.evaluateFunctionsJacobian(p_list[index_point, :])
             self.addToStoppingConditionCurrentValue('max_f_evals', problem.n)
 
-            while not self.evaluateStoppingConditions() and self.__theta < self._theta_for_stationarity:
+            while not self.evaluateStoppingConditions() and self.__theta < self._theta_tol:
                 new_p, self.__theta = self._direction_solver.computeDirection(problem, J, p_list[index_point, :], self.getStoppingConditionReferenceValue('max_time') - self.getStoppingConditionCurrentValue('max_time'))
                 new_f = problem.evaluateFunctions(new_p)
                 self.addToStoppingConditionCurrentValue('max_f_evals', 1)
@@ -61,7 +66,7 @@ class MOIHT(Gradient_Based_Algorithm):
                         print(new_p)
                         break
 
-                if not self.evaluateStoppingConditions() and self.__theta < self._theta_for_stationarity:
+                if not self.evaluateStoppingConditions() and self.__theta < self._theta_tol:
                     p_list[index_point, :] = new_p
                     f_list[index_point, :] = new_f
 

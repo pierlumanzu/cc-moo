@@ -1,7 +1,7 @@
 import time
 import numpy as np
 
-from algorithms.gradient_based.gradient_based_algorithm import Gradient_Based_Algorithm
+from algorithms.gradient_based.extended_gradient_based_algorithm import Gradient_Based_Algorithm
 from algorithms.gradient_based.Refiner.Refiner_MOPG import Refiner_MOPG
 from problems.PenaltyFunction.MOPF import MOPF
 
@@ -35,7 +35,7 @@ class MOSPD(Gradient_Based_Algorithm):
 
         self.__epsilon = epsilon_0
 
-        self._refiner = Refiner_MOPG(Ref_settings['MOPG']['theta_for_stationarity'],
+        self._refiner = Refiner_MOPG(Ref_settings['MOPG']['theta_tol'],
                                      max_time,
                                      sparse_tol,
                                      Gurobi_verbose,

@@ -1,9 +1,9 @@
 import os
 import numpy as np
-
 from nsma.algorithms.algorithm_utils.graphical_plot import GraphicalPlot
 
 from problems.extended_problem import ExtendedProblem
+
 
 def make_folder(folder_path: str):
     if not os.path.exists(folder_path):
@@ -61,5 +61,5 @@ def write_results_in_csv_file(date: str, seed: int, single_method_name: str, app
 def save_plots(date: str, seed: int, single_method_name: str, approach: str, problem_instance: ExtendedProblem, p_list: np.array, f_list: np.array, export_pareto_solutions, plot_dpi):
     assert len(p_list) == len(f_list)
 
-    graphical_plot = Graphical_Plot(export_pareto_solutions, plot_dpi)
-    graphical_plot.saveFigure(p_list, f_list, os.path.join('Execution_Outputs', date, str(seed), 'Plot'), algorithm_name, problem_instance)
+    graphical_plot = GraphicalPlot(export_pareto_solutions, plot_dpi)
+    graphical_plot.save_figure(p_list, f_list, os.path.join('Execution_Outputs', date, str(seed), 'Plot'), '{}-{}'.format(single_method_name, approach), problem_instance.name())

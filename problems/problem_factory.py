@@ -1,5 +1,4 @@
-from problems.regression.logistic.lr import LR
-from problems.quadratic.qp import QP
+from problems.logistic_regression.lr import LR
 
 
 class Problem_Factory:
@@ -9,16 +8,8 @@ class Problem_Factory:
         if problem_type == 'LR':
 
             return LR(kwargs['dat_prob_path'],
-                      s=kwargs['s'],
-                      L=kwargs['L'],
-                      L_inc_factor=kwargs['L_inc_factor'])
-
-        elif problem_type == 'QP':
-
-            return QP(kwargs['dat_prob_path'],
-                      s=kwargs['s'],
-                      L=kwargs['L'],
-                      L_inc_factor=kwargs['L_inc_factor'])
+                      kwargs['s'],
+                      kwargs['sparsity_tol'])
 
         else:
             raise NotImplementedError

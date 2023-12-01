@@ -16,8 +16,6 @@ def get_args():
 
     parser.add_argument('--seeds', help='Execution Seeds', nargs='+', type=int, default=[16007])
 
-    parser.add_argument('--max_iter', help='Maximum number of iterations', default=None, type=int)
-
     parser.add_argument('--max_time', help='Maximum number of elapsed minutes per problem', default=None, type=float)
 
     parser.add_argument('--max_f_evals', help='Maximum number of function evaluations', default=None, type=int)
@@ -52,7 +50,7 @@ def get_args():
 
     parser.add_argument('--MOIHT_L_inc_factor', help='MOIHT parameter -- L incremental factor', type=float, default=1.1)
 
-    parser.add_argument('--MOIHT_theta_for_stationarity', help='MOIHT parameter -- Theta for Pareto stationarity', default=-1e-7, type=float)
+    parser.add_argument('--MOIHT_theta_tol', help='MOIHT parameter -- Theta for Pareto stationarity', default=-1e-7, type=float)
 
     ####################################################
     ### ONLY FOR MOSPD ###
@@ -80,17 +78,19 @@ def get_args():
     ### ONLY FOR MOSD/IFSD ###
     ####################################################
 
-    parser.add_argument('--MOSD_IFSD_theta_for_stationarity', help='MOSD/IFSD parameter -- Theta for Pareto stationarity', default=-1e-7, type=float)
+    parser.add_argument('--MOSD_IFSD_theta_tol', help='MOSD/IFSD parameter -- Theta for Pareto stationarity', default=-1e-7, type=float)
+    
+    parser.add_argument('--IFSD_qth_quantile', help='IFSD parameter -- q-th quantile', default=0.95, type=float)
 
     ####################################################
     ### ONLY FOR Gurobi ###
     ####################################################
 
-    parser.add_argument('--Gurobi_method', help='Gurobi parameter -- Used method', default=1, type=int)
+    parser.add_argument('--gurobi_method', help='Gurobi parameter -- Used method', default=1, type=int)
 
-    parser.add_argument('--Gurobi_verbose', help='Gurobi parameter -- Verbose during the Gurobi iterations', action='store_true', default=False)
+    parser.add_argument('--gurobi_verbose', help='Gurobi parameter -- Verbose during the Gurobi iterations', action='store_true', default=False)
 
-    parser.add_argument('--Gurobi_feas_tol', help='Gurobi parameter -- Feasibility tolerance', default=1e-7, type=float)
+    parser.add_argument('--gurobi_feasibility_tol', help='Gurobi parameter -- Feasibility tolerance', default=1e-7, type=float)
 
     ####################################################
     ### ONLY FOR ArmijoTypeLineSearch ###

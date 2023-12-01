@@ -1,13 +1,11 @@
 import numpy as np
 import scipy
 
+from nsma.general_utils.pareto_utils import pareto_efficient
 
-def pointsInitialization(problem, algorithm_name, seed=None):
-    if algorithm_name not in ['GSS', 'MIP', 'F-MIP', 'F-GSS']:
-        assert seed is not None
-        p_list = problem.generateFeasiblePoints('rand_sparse', 2 * problem.n, seed=seed)
-    else:
-        p_list = np.zeros((2 * problem.n, problem.n), dtype=float)
+
+def pointsInitialization(problem, n_initial_points, seed):
+    p_list = problem.generateFeasiblePoints('rand_sparse', n_initial_points, seed=seed)
 
     n_initial_points = len(p_list)
     f_list = np.zeros((n_initial_points, problem.m), dtype=float)
@@ -35,7 +33,7 @@ def pointsPostprocessing(p_list, f_list, problem):
     infeasible_points = 0
     for p in range(n_points):
         constraints = problem.evaluateConstraints(p_list[p, :])
-        if (constraints > 0).any():
+        if (constraints > 0).any() or np.sum(np.abs(p_list[p, :]) >= problem.sparsity_tol) > problem.s:
             feasible[p] = False
             infeasible_points += 1
     if infeasible_points > 0:
@@ -44,40 +42,17 @@ def pointsPostprocessing(p_list, f_list, problem):
     p_list = p_list[feasible, :]
     f_list = f_list[feasible, :]
 
-    efficient_point_idx = paretoEfficient(f_list)
+    efficient_point_idx = pareto_efficient(f_list)
     p_list = p_list[efficient_point_idx, :]
     f_list = f_list[efficient_point_idx, :]
 
-    print('Results: found {} points'.format(len(p_list)))
+    print('Results: found {} feasible efficient points'.format(len(p_list)))
     print()
 
     return p_list, f_list
 
 
-def paretoEfficient(f_list):
-    n_points, m = f_list.shape
-    efficient = np.array([False] * n_points, dtype=bool)
-
-    _, index = np.unique(f_list, return_index=True, axis=0)
-    index = sorted(index)
-    for el in np.arange(n_points):
-        if el not in index:
-            efficient[el] = False
-    duplicates = [el for el in np.arange(n_points) if el not in index]
-    indices = np.arange(n_points)
-
-    for i in range(n_points):
-        partial_ix = duplicates + [i]
-        partial_matrix = f_list[np.delete(indices, partial_ix), :]
-        dominance_matrix = partial_matrix - np.reshape(f_list[i, :], newshape=(1, m))
-        is_dominated = (np.logical_and(np.sum(dominance_matrix <= 0, axis=1) == m, np.sum(dominance_matrix < 0, axis=1) > 0)).any()
-        if not is_dominated:
-            efficient[i] = True
-
-    return efficient
-
-
-def removeDuplicatesPoint(p_list, f_list, epsilon: float = 1e-16):
+def removeDuplicatesPoint(p_list, f_list):
 
     is_duplicate = np.array([False] * p_list.shape[0])
 
@@ -86,7 +61,7 @@ def removeDuplicatesPoint(p_list, f_list, epsilon: float = 1e-16):
 
     D[np.isnan(D)] = np.inf
 
-    is_duplicate[np.any(D < epsilon, axis=1)] = True
+    is_duplicate[np.any(D < 1e-16, axis=1)] = True
 
     p_list = p_list[~is_duplicate]
     f_list = f_list[~is_duplicate]

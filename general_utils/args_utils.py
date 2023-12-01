@@ -18,8 +18,6 @@ def check_args(args):
     assert os.path.isfile(args.prob_path) or os.path.isdir(args.prob_path)
     for seed in args.seeds:
         assert seed > 0
-    if args.max_iter is not None:
-        assert args.max_iter > 0
     if args.max_time is not None:
         assert args.max_time > 0
     if args.max_f_evals is not None:
@@ -34,7 +32,7 @@ def check_args(args):
     if args.MOIHT_L is not None:
         assert args.MOIHT_L > 0
     assert args.MOIHT_L_inc_factor > 1
-    assert args.MOIHT_theta_for_stationarity <= 0
+    assert args.MOIHT_theta_tol <= 0
 
     assert args.MOSPD_xy_diff >= 0
     assert args.MOSPD_max_inner_iter_count > 0
@@ -46,10 +44,11 @@ def check_args(args):
     assert 0 <= args.MOSPD_min_epsilon_0_dec_factor < args.MOSPD_epsilon_dec_factor
     assert 0 < args.MOSPD_epsilon_dec_factor < 1
 
-    assert args.MOSD_IFSD_theta_for_stationarity <= 0
+    assert args.MOSD_IFSD_theta_tol <= 0
+    assert 0 <= args.IFSD_qth_quantile <= 1
 
-    assert -1 <= args.Gurobi_method <= 5
-    assert args.Gurobi_feas_tol > 0
+    assert -1 <= args.gurobi_method <= 5
+    assert args.gurobi_feasibility_tol > 0
 
     assert args.ALS_alpha_0 > 0
     assert 0 < args.ALS_delta < 1
@@ -73,7 +72,6 @@ def args_preprocessing(args):
                      'prob_path': args.prob_path}
 
     general_settings = {'seeds': args.seeds,
-                        'max_iter': args.max_iter,
                         'max_time': args.max_time,
                         'max_f_evals': args.max_f_evals,
                         'verbose': args.verbose,
@@ -89,7 +87,7 @@ def args_preprocessing(args):
 
     MOIHT_settings = {'L': args.MOIHT_L,
                       'L_inc_factor': args.MOIHT_L_inc_factor,
-                      'theta_for_stationarity': args.MOIHT_theta_for_stationarity}
+                      'theta_tol': args.MOIHT_theta_tol}
     MOSPD_settings = {'xy_diff': args.MOSPD_xy_diff,
                       'max_inner_iter_count': args.MOSPD_max_inner_iter_count,
                       'max_MOSD_iters': args.MOSPD_max_MOSD_iters,
@@ -100,14 +98,16 @@ def args_preprocessing(args):
                       'min_epsilon_0_dec_factor': args.MOSPD_min_epsilon_0_dec_factor,
                       'epsilon_dec_factor': args.MOSPD_epsilon_dec_factor}
 
-    MOSD_IFSD_settings = {'theta_for_stationarity': args.MOSD_IFSD_theta_for_stationarity}
+    MOSD_IFSD_settings = {'theta_tol': args.MOSD_IFSD_theta_tol,
+                          'qth_quantile': args.IFSD_qth_quantile}
+
     algorithms_settings = {'MOIHT': MOIHT_settings,
                            'MOSPD': MOSPD_settings,
                            'MOSD_IFSD': MOSD_IFSD_settings}
 
-    DDS_settings = {'method': args.Gurobi_method,
-                    'verbose': args.Gurobi_verbose,
-                    'feas_tol': args.Gurobi_feas_tol}
+    DDS_settings = {'method': args.gurobi_method,
+                    'verbose': args.gurobi_verbose,
+                    'feas_tol': args.gurobi_feasibility_tol}
 
     ALS_settings = {'alpha_0': args.ALS_alpha_0,
                     'delta': args.ALS_delta,
