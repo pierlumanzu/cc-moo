@@ -1,8 +1,8 @@
 import numpy as np
 from gurobipy import Model, GRB
 
-from Direction_Solvers.MOPGD.MOPGD import MOPGD
-from Direction_Solvers.Gurobi_Settings import Gurobi_Settings
+from direction_solvers.MOPGD.MOPGD import MOPGD
+from direction_solvers.Gurobi_Settings import Gurobi_Settings
 
 
 class MOPGD_GurobiVersion(MOPGD, Gurobi_Settings):

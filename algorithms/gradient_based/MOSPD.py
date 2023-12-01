@@ -1,9 +1,9 @@
 import time
 import numpy as np
 
-from Algorithms.Gradient_Based.Gradient_Based_Algorithm import Gradient_Based_Algorithm
-from Algorithms.Gradient_Based.Refiner.Refiner_MOPG import Refiner_MOPG
-from Problems.PenaltyFunction.MOPF import MOPF
+from algorithms.gradient_based.Gradient_Based_Algorithm import Gradient_Based_Algorithm
+from algorithms.gradient_based.Refiner.Refiner_MOPG import Refiner_MOPG
+from problems.PenaltyFunction.MOPF import MOPF
 
 
 class MOSPD(Gradient_Based_Algorithm):

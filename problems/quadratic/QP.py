@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 import pickle
 
-from Problems.Problem import Problem
+from problems.Problem import Problem
 
 
 class QP(Problem):
@@ -27,7 +27,7 @@ class QP(Problem):
             self._L = self._L_inc_factor * max(np.linalg.norm(self.__Q_a, ord=2), np.linalg.norm(self.__Q_b, ord=2))
 
         self._problem_name = problem_path.split('/')[-1][:-4]
-        self._family_name = 'Quadratic'
+        self._family_name = 'quadratic'
 
     @staticmethod
     def load_QP_problem(problem_path):

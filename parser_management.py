@@ -4,15 +4,15 @@ import sys
 
 def get_args():
 
-    parser = argparse.ArgumentParser(description='Algorithms for Multi-Objective Optimization')
+    parser = argparse.ArgumentParser(description='algorithms for Multi-Objective Optimization')
 
     parser.add_argument('--single_methods', type=str, help='Single Method', nargs='+', choices=['MOIHT', 'MOSPD', 'MOHyb'])
 
     parser.add_argument('--approach', type=str, help='Approach to use with the Single Methods', choices=['Multi-Start', 'SFSD'])
 
-    parser.add_argument('--prob_type', type=str, help='Problems Type', choices=['LR'])
+    parser.add_argument('--prob_type', type=str, help='problems Type', choices=['LR'])
 
-    parser.add_argument('--prob_path', help='Problems path (folder or file)', type=str)
+    parser.add_argument('--prob_path', help='problems path (folder or file)', type=str)
 
     parser.add_argument('--seeds', help='Execution Seeds', nargs='+', type=int, default=[16007])
 

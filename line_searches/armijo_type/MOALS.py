@@ -1,6 +1,6 @@
 import numpy as np
 
-from Line_Searches.Armijo_Type.ALS import ALS
+from line_searches.armijo_type.ALS import ALS
 
 
 class MOALS(ALS):

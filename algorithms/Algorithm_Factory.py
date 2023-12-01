@@ -1,13 +1,13 @@
-from Algorithms.Gradient_Based.F_MOIHT import F_MOIHT
-from Algorithms.Gradient_Based.MOIHT import MOIHT
-from Algorithms.Gradient_Based.F_MOSPD import F_MOSPD
-from Algorithms.Gradient_Based.MOSPD import MOSPD
-from Algorithms.Gradient_Based.F_MOSPD_MOIHT import F_MOSPD_MOIHT
-from Algorithms.Gradient_Based.MOSPD_MOIHT import MOSPD_MOIHT
-from Algorithms.Gradient_Based.F_MIP import F_MIP
-from Algorithms.Gradient_Based.MIP import MIP
-from Algorithms.Gradient_Based.F_GSS import F_GSS
-from Algorithms.Gradient_Based.GSS import GSS
+from algorithms.gradient_based.F_MOIHT import F_MOIHT
+from algorithms.gradient_based.MOIHT import MOIHT
+from algorithms.gradient_based.F_MOSPD import F_MOSPD
+from algorithms.gradient_based.MOSPD import MOSPD
+from algorithms.gradient_based.F_MOSPD_MOIHT import F_MOSPD_MOIHT
+from algorithms.gradient_based.MOSPD_MOIHT import MOSPD_MOIHT
+from algorithms.gradient_based.F_MIP import F_MIP
+from algorithms.gradient_based.MIP import MIP
+from algorithms.gradient_based.F_GSS import F_GSS
+from algorithms.gradient_based.GSS import GSS
 
 
 class Algorithm_Factory:

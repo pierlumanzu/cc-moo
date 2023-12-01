@@ -1,8 +1,8 @@
 import time
 import numpy as np
 
-from Direction_Solvers.Direction_Solver_Factory import Direction_Descent_Factory
-from Line_Searches.Line_Search_Factory import Line_Search_Factory
+from direction_solvers.Direction_Solver_Factory import Direction_Descent_Factory
+from line_searches.Line_Search_Factory import Line_Search_Factory
 
 
 class Refiner_MOPG:

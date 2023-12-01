@@ -1,5 +1,5 @@
-from Problems.Regression.Logistic.LR import LR
-from Problems.Quadratic.QP import QP
+from problems.regression.logistic.LR import LR
+from problems.quadratic.QP import QP
 
 
 class Problem_Factory:

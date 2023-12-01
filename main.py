@@ -4,15 +4,15 @@ import tensorflow as tf
 import glob
 import os
 
-from Algorithms.Algorithm_Utils.Graphical_Plot import Graphical_Plot
-from Algorithms.Algorithm_Factory import Algorithm_Factory
+from algorithms.algorithm_utils.Graphical_Plot import Graphical_Plot
+from algorithms.Algorithm_Factory import Algorithm_Factory
 
-from Problems.Problem_Factory import Problem_Factory
+from problems.Problem_Factory import Problem_Factory
 
-from General_Utils.Args_Utils import print_parameters, args_preprocessing, args_file_creation
-from General_Utils.Management_Utils import folder_initialization, execution_time_file_initialization, write_in_execution_time_file, write_results_in_csv_file, save_plots
-from General_Utils.Pareto_Utils import pointsInitialization, pointsPostprocessing
-from General_Utils.Progress_Bar import Progress_Bar
+from general_utils.Args_Utils import print_parameters, args_preprocessing, args_file_creation
+from general_utils.Management_Utils import folder_initialization, execution_time_file_initialization, write_in_execution_time_file, write_results_in_csv_file, save_plots
+from general_utils.Pareto_Utils import pointsInitialization, pointsPostprocessing
+from general_utils.Progress_Bar import Progress_Bar
 
 from parser_management import get_args
 
@@ -37,8 +37,8 @@ if prob_settings['prob_type'] == 'QP':
 else:
     dat_prob_paths = prob_settings['dat_prob_paths']
 
-print('N° Algorithms: ', len(algorithms_names))
-print('N° Problems: ', len(dat_prob_paths) * len(prob_settings['L']) * len(prob_settings['s']))
+print('N° algorithms: ', len(algorithms_names))
+print('N° problems: ', len(dat_prob_paths) * len(prob_settings['L']) * len(prob_settings['s']))
 print('N° Seeds: ', len(general_settings['seeds']))
 print()
 

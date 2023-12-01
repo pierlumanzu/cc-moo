@@ -2,10 +2,10 @@ import numpy as np
 from abc import ABC
 from itertools import chain, combinations
 
-from Algorithms.Algorithm import Algorithm
+from algorithms.Algorithm import Algorithm
 
-from Direction_Solvers.Direction_Solver_Factory import Direction_Descent_Factory
-from Line_Searches.Line_Search_Factory import Line_Search_Factory
+from direction_solvers.Direction_Solver_Factory import Direction_Descent_Factory
+from line_searches.Line_Search_Factory import Line_Search_Factory
 
 
 class Gradient_Based_Algorithm(Algorithm, ABC):

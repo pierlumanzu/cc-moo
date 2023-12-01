@@ -1,8 +1,8 @@
 import numpy as np
 from gurobipy import Model, GRB, GurobiError
 
-from Direction_Solvers.BF.BF import BF
-from Direction_Solvers.Gurobi_Settings import Gurobi_Settings
+from direction_solvers.BF.BF import BF
+from direction_solvers.Gurobi_Settings import Gurobi_Settings
 
 
 class BF_GurobiVersion(BF, Gurobi_Settings):

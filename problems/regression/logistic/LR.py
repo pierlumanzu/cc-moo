@@ -3,7 +3,7 @@ from sklearn.datasets import load_svmlight_file
 from sklearn.preprocessing import StandardScaler
 import tensorflow as tf
 
-from Problems.Problem import Problem
+from problems.Problem import Problem
 
 
 class LR(Problem):
@@ -35,5 +35,5 @@ class LR(Problem):
             self._L = self._L_inc_factor * max(np.linalg.norm(1/self.__X.shape[0] * np.dot(self.__X.T, self.__X), ord=2), 1)
 
         self._problem_name = dataset_path.split('/')[-1]
-        self._family_name = 'Logistic Regression'
+        self._family_name = 'logistic regression'
 
