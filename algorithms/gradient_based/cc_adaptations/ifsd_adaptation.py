@@ -67,15 +67,17 @@ class IFSDAdaptation(ExtendedGradientBasedAlgorithm):
 
                 x_p = previous_p_list[index_p, :]
                 f_p = previous_f_list[index_p, :]
+                
+                previous_f_list_by_support = previous_f_list[np.where(previous_idx_point_to_support == previous_idx_point_to_support[index_p])[0], :]
 
-                p_list_by_support = p_list[np.where(idx_point_to_support == previous_idx_point_to_support[index_p])[0], :]
-                f_list_by_support = f_list[np.where(idx_point_to_support == previous_idx_point_to_support[index_p])[0], :]
+                idx_idx_point_to_support_by_support = np.where(idx_point_to_support == previous_idx_point_to_support[index_p])[0]
+
+                p_list_by_support = p_list[idx_idx_point_to_support_by_support, :]
+                f_list_by_support = f_list[idx_idx_point_to_support_by_support, :]
+                idx_point_to_support_by_support = idx_point_to_support[idx_idx_point_to_support_by_support]
 
                 if self.existsDominatingPoint(f_p, f_list_by_support):
                     continue
-
-                previous_f_list_by_support = previous_f_list[np.where(previous_idx_point_to_support == previous_idx_point_to_support[index_p])[0], :]
-                idx_point_to_support_by_support = idx_point_to_support[np.where(idx_point_to_support == previous_idx_point_to_support[index_p])[0]]
 
                 crowding_list = calc_crowding_distance(previous_f_list_by_support)
                 is_finite_idx = np.isfinite(crowding_list)
@@ -85,10 +87,10 @@ class IFSDAdaptation(ExtendedGradientBasedAlgorithm):
                 else:
                     crowding_quantile = np.inf
 
+                power_set = self.objectivesPowerset(problem.m)
+
                 J_p = problem.evaluate_functions_jacobian(x_p)
                 self.add_to_stopping_condition_current_value('max_f_evals', problem.n)
-
-                power_set = self.objectivesPowerset(problem.m)
 
                 common_d_p, common_theta_p = self._direction_solver.compute_direction(problem, J_p, x_p=x_p, subspace_support=super_support_sets[previous_idx_point_to_support[index_p]], time_limit=self.__max_time - time.time() + self.get_stopping_condition_current_value('max_time'))
 
@@ -106,72 +108,58 @@ class IFSDAdaptation(ExtendedGradientBasedAlgorithm):
                         else:
                             new_x_p[np.abs(new_x_p) < problem.sparsity_tol] = 0.
 
-                        # TODO: restart from here!
+                        efficient_point_idx = self.fast_non_dominated_filter(f_list_by_support, new_f_p.reshape((1, problem.m)))
 
-                        efficient_point_idx = self.fastNonDominatedFilter(f_list_by_support, new_f_p.reshape((1, m)))
-
-                        p_list_by_support = np.concatenate((p_list_by_support[efficient_point_idx, :], new_x_p.reshape((1, n))), axis=0)
-                        f_list_by_support = np.concatenate((f_list_by_support[efficient_point_idx, :], new_f_p.reshape((1, m))), axis=0)
-                        point_support_matching_by_support = np.concatenate((point_support_matching_by_support[efficient_point_idx], np.array([previous_idx_point_to_support[index_p]])))
+                        p_list_by_support = np.concatenate((p_list_by_support[efficient_point_idx, :], new_x_p.reshape((1, problem.n))), axis=0)
+                        f_list_by_support = np.concatenate((f_list_by_support[efficient_point_idx, :], new_f_p.reshape((1, problem.m))), axis=0)
+                        idx_point_to_support_by_support = np.concatenate((idx_point_to_support_by_support[efficient_point_idx], np.array([previous_idx_point_to_support[index_p]])))
 
                         x_p = np.copy(new_x_p)
                         f_p = np.copy(new_f_p)
 
-                        J_p = problem.evaluateFunctionsJacobian(x_p)
-                        self.addToStoppingConditionCurrentValue('max_f_evals', n)
+                        J_p = problem.evaluate_functions_jacobian(x_p)
+                        self.add_to_stopping_condition_current_value('max_f_evals', problem.n)
+
                 else:
-                    power_set.remove(tuple(range(m)))
+                    power_set.remove(tuple(range(problem.m)))
 
                 for I_k in power_set:
 
-                    if self.evaluateStoppingConditions():
+                    if self.evaluate_stopping_conditions() or self.existsDominatingPoint(f_p, f_list_by_support) or crowding_list[np.where((previous_f_list_by_support == f_p).all(axis=1))[0][0]] < crowding_quantile:
                         break
 
-                    if self.existsDominatingPoint(f_p, f_list_by_support, equal_allowed=True) or crowding[p_in_support] < crowding_quantile:
-                        break
+                    partial_d_p, partial_theta_p = self._direction_solver.computeDirection(problem, J_p[I_k, ], x_p=x_p, subspace_support=super_support_sets[previous_idx_point_to_support[index_p]], time_limit=self.__max_time - time.time() + self.get_stopping_condition_current_value('max_time'))
 
-                    common_d_p, common_theta_p = self._direction_solver.computeDirection(problem, J_p[I_k, ], x_p, self.getStoppingConditionReferenceValue('max_time') - self.getStoppingConditionCurrentValue('max_time'), consider_support=encountered_supports[previous_idx_point_to_support[index_p]])
-                    try:
-                        assert np.linalg.norm(common_d_p, 0) <= problem.s
-                    except AssertionError:
-                        print(str(index_p), np.linalg.norm(common_d_p, 0), problem.s, np.sum(np.abs(common_d_p) < self.__sparse_tol))
-                        if np.sum(np.abs(common_d_p) < self.__sparse_tol) >= problem.n - problem.s:
-                            common_d_p[np.abs(common_d_p) < self.__sparse_tol] = 0
-                        else:
-                            print('Warning!')
-                            print(common_d_p)
-                            continue
+                    if not self.evaluate_stopping_conditions() and partial_theta_p < self._theta_tol:
 
-                    if not self.evaluateStoppingConditions() and common_theta_p < self._theta_tol:
+                        new_x_p, new_f_p, _, f_eval = self._line_search.search(problem, x_p, f_list_by_support, partial_d_p, 0, np.arange(problem.m))
+                        self.add_to_stopping_condition_current_value('max_f_evals', f_eval)
 
-                        new_x_p, new_f_p, _, f_eval = self._line_search.search(problem, x_p, common_d_p, f_list_by_support, 0, np.arange(m))
-                        self.addToStoppingConditionCurrentValue('max_f_evals', f_eval)
+                        if not self.evaluate_stopping_conditions() and new_x_p is not None:
+                            
+                            if np.sum(np.abs(new_x_p) >= problem.sparsity_tol) > problem.s:
+                                print('Warning! Not found a feasible point! Optimization over!')
+                                print(new_x_p)
+                                continue
+                            else:
+                                new_x_p[np.abs(new_x_p) < problem.sparsity_tol] = 0.
 
-                        if not self.evaluateStoppingConditions() and new_x_p is not None:
+                            efficient_point_idx = self.fast_non_dominated_filter(f_list_by_support, new_f_p.reshape((1, problem.m)))
 
-                            efficient_point_idx = self.fastNonDominatedFilter(f_list_by_support, new_f_p.reshape((1, m)))
+                            p_list_by_support = np.concatenate((p_list_by_support[efficient_point_idx, :], new_x_p.reshape((1, problem.n))), axis=0)
+                            f_list_by_support = np.concatenate((f_list_by_support[efficient_point_idx, :], new_f_p.reshape((1, problem.m))), axis=0)
+                            idx_point_to_support_by_support = np.concatenate((idx_point_to_support_by_support[efficient_point_idx], np.array([previous_idx_point_to_support[index_p]])))
 
-                            update = True
+                p_list = np.concatenate((p_list[np.setdiff1d(np.arange(len(p_list)), idx_idx_point_to_support_by_support), :], p_list_by_support))
+                f_list = np.concatenate((f_list[np.setdiff1d(np.arange(len(f_list)), idx_idx_point_to_support_by_support), :], f_list_by_support))
+                idx_point_to_support = np.concatenate((idx_point_to_support[np.setdiff1d(np.arange(len(idx_point_to_support)), idx_idx_point_to_support_by_support)], idx_point_to_support_by_support))
 
-                            p_list_by_support = np.concatenate((p_list_by_support[efficient_point_idx, :], new_x_p.reshape((1, n))), axis=0)
-                            f_list_by_support = np.concatenate((f_list_by_support[efficient_point_idx, :], new_f_p.reshape((1, m))), axis=0)
-                            point_support_matching_by_support = np.concatenate((point_support_matching_by_support[efficient_point_idx], np.array([previous_idx_point_to_support[index_p]])))
+                self.show_figure(p_list, f_list)
 
-                            self.showFigure(p_list, f_list)
+        self.close_figure()
+        self.output_data(f_list, crowding_quantile=crowding_quantile)
 
-                p_list = np.concatenate((p_list[np.setdiff1d(np.arange(len(p_list)), np.where(point_support_matching == previous_idx_point_to_support[index_p])[0]), :],
-                                         p_list_by_support))
-                f_list = np.concatenate((f_list[np.setdiff1d(np.arange(len(f_list)), np.where(point_support_matching == previous_idx_point_to_support[index_p])[0]), :],
-                                         f_list_by_support))
-                point_support_matching = np.concatenate((point_support_matching[np.setdiff1d(np.arange(len(point_support_matching)), np.where(point_support_matching == previous_idx_point_to_support[index_p])[0])],
-                                                         point_support_matching_by_support))
-
-            self.showFigure(p_list, f_list)
-
-        self.closeFigure()
-        self.outputData(f_list)
-
-        return p_list, f_list, self.getStoppingConditionCurrentValue('max_time')
+        return p_list, f_list, time.time() - self.get_stopping_condition_current_value('max_time')
 
     def find_super_support_sets(self, p_list, f_list, problem: ExtendedProblem):
         random.seed(16007)
