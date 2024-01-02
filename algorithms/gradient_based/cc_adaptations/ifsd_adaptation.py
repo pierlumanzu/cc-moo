@@ -29,8 +29,6 @@ class IFSDAdaptation(ExtendedGradientBasedAlgorithm):
                                                 ALS_alpha_0, ALS_delta, ALS_beta, ALS_min_alpha,
                                                 name_DDS='Subspace_Steepest_Descent_DS', name_ALS='Boundconstrained_Front_ALS')
 
-        self.__max_time = max_time
-
         self.__single_point_line_search = Line_Search_Factory.getLineSearch('MOALS', ALS_alpha_0, ALS_delta, ALS_beta, ALS_min_alpha)
 
         self.__qth_quantile = qth_quantile
@@ -92,7 +90,7 @@ class IFSDAdaptation(ExtendedGradientBasedAlgorithm):
                 J_p = problem.evaluate_functions_jacobian(x_p)
                 self.add_to_stopping_condition_current_value('max_f_evals', problem.n)
 
-                common_d_p, common_theta_p = self._direction_solver.compute_direction(problem, J_p, x_p=x_p, subspace_support=super_support_sets[previous_idx_point_to_support[index_p]], time_limit=self.__max_time - time.time() + self.get_stopping_condition_current_value('max_time'))
+                common_d_p, common_theta_p = self._direction_solver.compute_direction(problem, J_p, x_p=x_p, subspace_support=super_support_sets[previous_idx_point_to_support[index_p]], time_limit=self._max_time - time.time() + self.get_stopping_condition_current_value('max_time'))
 
                 if not self.evaluate_stopping_conditions() and common_theta_p < self._theta_tol:
 
@@ -128,7 +126,7 @@ class IFSDAdaptation(ExtendedGradientBasedAlgorithm):
                     if self.evaluate_stopping_conditions() or self.existsDominatingPoint(f_p, f_list_by_support) or crowding_list[np.where((previous_f_list_by_support == f_p).all(axis=1))[0][0]] < crowding_quantile:
                         break
 
-                    partial_d_p, partial_theta_p = self._direction_solver.computeDirection(problem, J_p[I_k, ], x_p=x_p, subspace_support=super_support_sets[previous_idx_point_to_support[index_p]], time_limit=self.__max_time - time.time() + self.get_stopping_condition_current_value('max_time'))
+                    partial_d_p, partial_theta_p = self._direction_solver.computeDirection(problem, J_p[I_k, ], x_p=x_p, subspace_support=super_support_sets[previous_idx_point_to_support[index_p]], time_limit=self._max_time - time.time() + self.get_stopping_condition_current_value('max_time'))
 
                     if not self.evaluate_stopping_conditions() and partial_theta_p < self._theta_tol:
 
@@ -177,7 +175,7 @@ class IFSDAdaptation(ExtendedGradientBasedAlgorithm):
                 J_p = problem.evaluate_functions_jacobian(p_list[index_p, :])
                 self.add_to_stopping_condition_current_value('max_f_evals', problem.n)
 
-                z_p, theta_p = self.__additional_direction_solver.compute_direction(problem, J_p, x_p=p_list[index_p, :], time_limit=self.__max_time - time.time() + self.get_stopping_condition_current_value('max_time'))
+                z_p, theta_p = self.__additional_direction_solver.compute_direction(problem, J_p, x_p=p_list[index_p, :], time_limit=self._max_time - time.time() + self.get_stopping_condition_current_value('max_time'))
 
                 if np.sum(np.abs(z_p) >= problem.sparsity_tol) > problem.s:
                     print('Warning! Not found a feasible point! Optimization over!')

@@ -1,97 +1,97 @@
 import time
 import numpy as np
 
+from algorithms.gradient_based.cc_adaptations.ifsd_adaptation import IFSDAdaptation
+from algorithms.gradient_based.cc_adaptations.mosd_adaptation import MOSDAdaptation
 from algorithms.gradient_based.extended_gradient_based_algorithm import ExtendedGradientBasedAlgorithm
+from problems.extended_problem import ExtendedProblem
 
 
 class MOIHT(ExtendedGradientBasedAlgorithm):
 
     def __init__(self,
-                 max_iter, max_time, max_f_evals,
+                 max_time, max_f_evals,
                  verbose, verbose_interspace,
                  plot_pareto_front, plot_pareto_solutions, plot_dpi,
-                 theta_tol,
+                 L, L_inc_factor, theta_tol,
                  gurobi_method, gurobi_verbose, gurobi_feasibility_tol,
-                 Gurobi_verbose, Gurobi_method, Gurobi_feas_tol, ALS_settings, Ref_settings):
+                 approach, MOSD_IFSD_settings,
+                 ALS_alpha_0: float, ALS_delta: float, ALS_beta: float, ALS_min_alpha: float):
 
-        Gradient_Based_Algorithm.__init__(self,
-                                          max_iter, max_time, max_f_evals, verbose, verbose_interspace, plot_pareto_front, plot_pareto_solutions, plot_dpi,
-                                          theta_tol,
-                                          Gurobi_verbose,
-                                          Gurobi_feas_tol,
-                                          name_DDS='L_DS')
-
-        self.__theta = -np.inf
-
-        self.__sparse_tol = sparse_tol
-
-        self._refiner = Refiner_MOPG(Ref_settings['MOPG']['theta_tol'],
-                                     max_time,
-                                     sparse_tol,
-                                     Gurobi_verbose,
-                                     Gurobi_feas_tol,
-                                     Gurobi_method,
-                                     ALS_settings)
-        
-        self._front_mode = False
-
-    def search(self, p_list, f_list, problem):
-        self.updateStoppingConditionCurrentValue('max_time', time.time())
-
-        self.showFigure(p_list, f_list)
-
-        index_point = 0
-
-        while not self.evaluateStoppingConditions() and index_point < len(p_list):
-            self.addToStoppingConditionCurrentValue('max_iter', 1)
-
-            self.__theta = -np.inf
-
-            J = problem.evaluateFunctionsJacobian(p_list[index_point, :])
-            self.addToStoppingConditionCurrentValue('max_f_evals', problem.n)
-
-            while not self.evaluateStoppingConditions() and self.__theta < self._theta_tol:
-                new_p, self.__theta = self._direction_solver.computeDirection(problem, J, p_list[index_point, :], self.getStoppingConditionReferenceValue('max_time') - self.getStoppingConditionCurrentValue('max_time'))
-                new_f = problem.evaluateFunctions(new_p)
-                self.addToStoppingConditionCurrentValue('max_f_evals', 1)
-
-                try:
-                    assert np.linalg.norm(new_p, 0) <= problem.s
-                except AssertionError:
-                    print(str(index_point), np.linalg.norm(new_p, 0), problem.s, np.sum(np.abs(new_p) < self.__sparse_tol))
-                    if np.sum(np.abs(new_p) < self.__sparse_tol) >= problem.n - problem.s:
-                        new_p[np.abs(new_p) < self.__sparse_tol] = 0
-                    else:
-                        print('Warning!')
-                        print(new_p)
-                        break
-
-                if not self.evaluateStoppingConditions() and self.__theta < self._theta_tol:
-                    p_list[index_point, :] = new_p
-                    f_list[index_point, :] = new_f
-
-                    J = problem.evaluateFunctionsJacobian(p_list[index_point, :])
-                    self.addToStoppingConditionCurrentValue('max_f_evals', problem.n)
-
-                self.showFigure(p_list, f_list)
-
-            self.showFigure(p_list, f_list)
-
-            index_point += 1
-
-        if not self._front_mode:
-            time_elapsed = self.getStoppingConditionCurrentValue('max_time')
-            self.updateStoppingConditionCurrentValue('max_time', time.time())
-            for i in range(index_point):
-                p_list[i, :], f_list[i, :] = self._refiner.refine(p_list[i, :], f_list[i, :], i, problem, self.getStoppingConditionCurrentValue('max_time'))
-            p_list = p_list[:index_point, :]
-            f_list = f_list[:index_point, :]
-            self.closeFigure()
-            time_elapsed += self.getStoppingConditionCurrentValue('max_time')
+        if approach == 'Multi-Start':
+            refiner_instance = MOSDAdaptation(max_time, max_f_evals,
+                                              verbose, verbose_interspace,
+                                              plot_pareto_front, plot_pareto_solutions, plot_dpi,
+                                              MOSD_IFSD_settings["theta_tol"],
+                                              gurobi_method, gurobi_verbose, gurobi_feasibility_tol,
+                                              ALS_alpha_0, ALS_delta, ALS_beta, ALS_min_alpha)
+        elif approach == 'SFSD':
+            refiner_instance = IFSDAdaptation(max_time, max_f_evals,
+                                              verbose, verbose_interspace,
+                                              plot_pareto_front, plot_pareto_solutions, plot_dpi,
+                                              MOSD_IFSD_settings["theta_tol"], MOSD_IFSD_settings["qth_quantile"],
+                                              gurobi_method, gurobi_verbose, gurobi_feasibility_tol,
+                                              ALS_alpha_0, ALS_delta, ALS_beta, ALS_min_alpha)
         else:
-            self.closeFigure()
-            self._refiner.updateStoppingConditionReferenceValue('max_time', self.getStoppingConditionReferenceValue('max_time'))
-            p_list, f_list, _ = self._refiner.search(p_list[:index_point, :], f_list[:index_point, :], problem)
-            time_elapsed = self.getStoppingConditionCurrentValue('max_time')
+            refiner_instance = None
 
-        return p_list, f_list, time_elapsed
+        ExtendedGradientBasedAlgorithm.__init__(self,
+                                                max_time, max_f_evals,
+                                                verbose, verbose_interspace,
+                                                plot_pareto_front, plot_pareto_solutions, plot_dpi,
+                                                theta_tol,
+                                                gurobi_method, gurobi_verbose, gurobi_feasibility_tol,
+                                                0., 0., 0., 0.,
+                                                name_DDS='MOIHT_DS', refiner_instance=refiner_instance)
+
+        self.__L = L
+        self.__L_inc_factor = L_inc_factor
+
+    def search(self, p_list, f_list, problem: ExtendedProblem):
+        self.update_stopping_condition_current_value('max_time', time.time())
+
+        self.show_figure(p_list, f_list)
+
+        for index_p in range(len(p_list)):
+
+            self.output_data(f_list)
+
+            if self.evaluate_stopping_conditions():
+                break
+
+            x_p_tmp = np.copy(p_list[index_p, :])
+            f_p_tmp = np.copy(f_list[index_p, :])
+
+            theta_p = -np.inf
+
+            while not self.evaluate_stopping_conditions() and theta_p < self._theta_tol:
+
+                J_p = problem.evaluate_functions_jacobian(x_p_tmp)
+                self.add_to_stopping_condition_current_value('max_f_evals', problem.n)
+
+                new_x_p_tmp, theta_p = self._direction_solver.compute_direction(problem, J_p, x_p=x_p_tmp, L=self.__L * self.__L_inc_factor, time_limit=self._max_time - time.time() + self.get_stopping_condition_current_value('max_time'))
+
+                if not self.evaluate_stopping_conditions() and theta_p < self._theta_tol:
+
+                    new_f_p_tmp = problem.evaluate_functions(new_x_p_tmp)
+                    self.add_to_stopping_condition_current_value('max_f_evals', 1)
+                    
+                    if np.sum(np.abs(new_x_p_tmp) >= problem.sparsity_tol) > problem.s:
+                        print('Warning! Not found a feasible point! Optimization over!')
+                        print(new_x_p_tmp)
+                        break
+                    else:
+                        new_x_p_tmp[np.abs(new_x_p_tmp) < problem.sparsity_tol] = 0.
+
+                    x_p_tmp = new_x_p_tmp
+                    f_p_tmp = new_f_p_tmp
+
+            p_list[index_p, :] = x_p_tmp
+            f_list[index_p, :] = f_p_tmp
+
+            self.show_figure(p_list, f_list)
+
+        self.output_data(f_list)
+        self.close_figure()
+
+        return p_list, f_list, time.time() - self.get_stopping_condition_current_value('max_time')

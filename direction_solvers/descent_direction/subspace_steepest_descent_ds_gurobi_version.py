@@ -15,8 +15,8 @@ class SubspaceSteepestDescentDSGurobiVersion(DDS, ExtendedGurobiSettings):
 
     def compute_direction(self, problem: ExtendedProblem, Jac, x_p=None, subspace_support=None, time_limit=None):
         assert x_p is not None
-        assert subspace_support is not None
-        assert len(subspace_support) <= problem.s
+        if subspace_support is not None:
+            assert len(subspace_support) <= problem.s
 
         m, n = Jac.shape
 
@@ -40,10 +40,11 @@ class SubspaceSteepestDescentDSGurobiVersion(DDS, ExtendedGurobiSettings):
             for j in range(m):
                 model.addConstr(Jac[j, :] @ z <= beta + Jac[j, :] @ x_p, name='Jacobian Constraint n°{}'.format(j))
 
-            for i in range(n):
-                if i not in subspace_support:
-                    model.addConstr(z[i] - x_p[i] <= 0, name='Subspace Constraint Upper Bound n°{}'.format(i))
-                    model.addConstr(z[i] - x_p[i] >= 0, name='Subspace Constraint Lower Bound n°{}'.format(i))
+            if subspace_support is not None:
+                for i in range(n):
+                    if i not in subspace_support:
+                        model.addConstr(z[i] - x_p[i] <= 0, name='Subspace Constraint Upper Bound n°{}'.format(i))
+                        model.addConstr(z[i] - x_p[i] >= 0, name='Subspace Constraint Lower Bound n°{}'.format(i))
 
             model.update()
 

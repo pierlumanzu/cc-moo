@@ -37,7 +37,7 @@ In order to execute the code, you need an [Anaconda](https://www.anaconda.com/) 
 For the package installation, open a terminal (Anaconda Prompt for Windows users) in the project root folder and execute the following command. Note that a Python version 3.9 or higher is required.
 
 ```
-pip install nsma
+pip install nsma/scikit
 ```
 
 ##### Gurobi Optimizer

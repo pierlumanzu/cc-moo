@@ -24,8 +24,6 @@ class MOSDAdaptation(ExtendedGradientBasedAlgorithm):
                                                 ALS_alpha_0, ALS_delta, ALS_beta, ALS_min_alpha,
                                                 name_DDS='Subspace_Steepest_Descent_DS', name_ALS='MOALS')
 
-        self.__max_time = max_time
-
     def search(self, p_list, f_list, problem: ExtendedProblem):
 
         self.update_stopping_condition_current_value('max_time', time.time())
@@ -49,7 +47,7 @@ class MOSDAdaptation(ExtendedGradientBasedAlgorithm):
                 J_p = problem.evaluate_functions_jacobian(x_p_tmp)
                 self.add_to_stopping_condition_current_value('max_f_evals', problem.n)
 
-                d_p, theta_p = self._direction_solver.compute_direction(problem, J_p, x_p=x_p_tmp, subspace_support=np.where(np.abs(x_p_tmp) >= problem.sparsity_tol)[0], time_limit=self.__max_time - time.time() + self.get_stopping_condition_current_value('max_time'))
+                d_p, theta_p = self._direction_solver.compute_direction(problem, J_p, x_p=x_p_tmp, subspace_support=np.where(np.abs(x_p_tmp) >= problem.sparsity_tol)[0], time_limit=self._max_time - time.time() + self.get_stopping_condition_current_value('max_time'))
 
                 if not self.evaluate_stopping_conditions() and theta_p < self._theta_tol:
 
@@ -67,6 +65,9 @@ class MOSDAdaptation(ExtendedGradientBasedAlgorithm):
 
                         x_p_tmp = new_x_p_tmp
                         f_p_tmp = new_f_p_tmp
+
+            p_list[index_p, :] = x_p_tmp
+            f_list[index_p, :] = f_p_tmp
 
             self.show_figure(p_list, f_list)
 
