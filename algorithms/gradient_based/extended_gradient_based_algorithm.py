@@ -54,5 +54,5 @@ class ExtendedGradientBasedAlgorithm(GradientBasedAlgorithm, ABC):
     def callRefiner(self, p_list, f_list, problem):
         assert self._refiner_instance is not None
 
-        self._refiner_instance.update_stopping_condition_reference_value('max_time', self.__max_time - time.time() + self.get_stopping_condition_current_value('max_time'))
+        
         return self._refiner_instance.search(p_list, f_list, problem)

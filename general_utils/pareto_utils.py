@@ -3,14 +3,16 @@ import scipy
 
 from nsma.general_utils.pareto_utils import pareto_efficient
 
+from problems.extended_problem import ExtendedProblem
 
-def pointsInitialization(problem, n_initial_points, seed):
-    p_list = problem.generateFeasiblePoints('rand_sparse', n_initial_points, seed=seed)
+
+def pointsInitialization(problem: ExtendedProblem, seed):
+    p_list = problem.generateFeasiblePoints('rand_sparse', 2 * problem.n, seed=seed)
 
     n_initial_points = len(p_list)
     f_list = np.zeros((n_initial_points, problem.m), dtype=float)
     for p in range(n_initial_points):
-        f_list[p, :] = problem.evaluateFunctions(p_list[p, :])
+        f_list[p, :] = problem.evaluate_functions(p_list[p, :])
 
     return p_list, f_list, n_initial_points
 
@@ -20,7 +22,7 @@ def pointsPostprocessing(p_list, f_list, problem):
     old_n_points, _ = p_list.shape
 
     for p in range(old_n_points):
-        f_list[p, :] = problem.evaluateFunctions(p_list[p, :])
+        f_list[p, :] = problem.evaluate_functions(p_list[p, :])
 
     p_list, f_list = removeDuplicatesPoint(p_list, f_list)
 
@@ -32,8 +34,7 @@ def pointsPostprocessing(p_list, f_list, problem):
     feasible = [True] * n_points
     infeasible_points = 0
     for p in range(n_points):
-        constraints = problem.evaluateConstraints(p_list[p, :])
-        if (constraints > 0).any() or np.sum(np.abs(p_list[p, :]) >= problem.sparsity_tol) > problem.s:
+        if np.sum(np.abs(p_list[p, :]) >= problem.sparsity_tol) > problem.s:
             feasible[p] = False
             infeasible_points += 1
     if infeasible_points > 0:

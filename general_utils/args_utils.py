@@ -59,14 +59,14 @@ def check_args(args):
 def args_preprocessing(args):
     check_args(args)
 
-    single_methods_names = []
+    single_point_methods_names = []
     if 'MOIHT' in args.single_methods:
-        single_methods_names.append('MOIHT')
+        single_point_methods_names.append('MOIHT')
     if 'MOSPD' in args.single_methods:
-        single_methods_names.append('MOSPD')
+        single_point_methods_names.append('MOSPD')
     if 'MOHyb' in args.single_methods:
-        single_methods_names.append('MOHyb')
-    approach = args.approach
+        single_point_methods_names.append('MOHyb')
+    refiner = args.refiner
 
     prob_settings = {'prob_type': args.prob_type,
                      'prob_path': args.prob_path}
@@ -114,7 +114,7 @@ def args_preprocessing(args):
                     'beta': args.ALS_beta,
                     'min_alpha': args.ALS_min_alpha}
 
-    return single_methods_names, approach, prob_settings, general_settings, sparsity_settings, algorithms_settings, DDS_settings, ALS_settings
+    return single_point_methods_names, refiner, prob_settings, general_settings, sparsity_settings, algorithms_settings, DDS_settings, ALS_settings
 
 
 def args_file_creation(date: str, seed: int, args):

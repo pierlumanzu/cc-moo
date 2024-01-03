@@ -15,17 +15,17 @@ class MOIHT(ExtendedGradientBasedAlgorithm):
                  plot_pareto_front, plot_pareto_solutions, plot_dpi,
                  L, L_inc_factor, theta_tol,
                  gurobi_method, gurobi_verbose, gurobi_feasibility_tol,
-                 approach, MOSD_IFSD_settings,
+                 refiner, MOSD_IFSD_settings,
                  ALS_alpha_0: float, ALS_delta: float, ALS_beta: float, ALS_min_alpha: float):
 
-        if approach == 'Multi-Start':
+        if refiner == 'Multi-Start':
             refiner_instance = MOSDAdaptation(max_time, max_f_evals,
                                               verbose, verbose_interspace,
                                               plot_pareto_front, plot_pareto_solutions, plot_dpi,
                                               MOSD_IFSD_settings["theta_tol"],
                                               gurobi_method, gurobi_verbose, gurobi_feasibility_tol,
                                               ALS_alpha_0, ALS_delta, ALS_beta, ALS_min_alpha)
-        elif approach == 'SFSD':
+        elif refiner == 'SFSD':
             refiner_instance = IFSDAdaptation(max_time, max_f_evals,
                                               verbose, verbose_interspace,
                                               plot_pareto_front, plot_pareto_solutions, plot_dpi,
@@ -69,7 +69,7 @@ class MOIHT(ExtendedGradientBasedAlgorithm):
                 J_p = problem.evaluate_functions_jacobian(x_p_tmp)
                 self.add_to_stopping_condition_current_value('max_f_evals', problem.n)
 
-                new_x_p_tmp, theta_p = self._direction_solver.compute_direction(problem, J_p, x_p=x_p_tmp, L=self.__L * self.__L_inc_factor, time_limit=self._max_time - time.time() + self.get_stopping_condition_current_value('max_time'))
+                new_x_p_tmp, theta_p = self._direction_solver.compute_direction(problem, J_p, x_p=x_p_tmp, L=(self.__L if self.__L is not None else problem.L) * self.__L_inc_factor, time_limit=self._max_time - time.time() + self.get_stopping_condition_current_value('max_time'))
 
                 if not self.evaluate_stopping_conditions() and theta_p < self._theta_tol:
 
@@ -93,5 +93,7 @@ class MOIHT(ExtendedGradientBasedAlgorithm):
 
         self.output_data(f_list)
         self.close_figure()
+
+        p_list, f_list, _ = self.callRefiner(p_list, f_list, problem)
 
         return p_list, f_list, time.time() - self.get_stopping_condition_current_value('max_time')
