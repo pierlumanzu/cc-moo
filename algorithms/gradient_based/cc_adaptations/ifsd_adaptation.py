@@ -58,13 +58,13 @@ class IFSDAdaptation(ExtendedGradientBasedAlgorithm):
             previous_visited = np.zeros(len(previous_p_list), dtype=bool)
             previous_idx_point_to_support = np.copy(idx_point_to_support)
 
-            while not self.evaluate_stopping_conditions() and (previous_visited is False).any():
+            while not self.evaluate_stopping_conditions() and (previous_visited == False).any():
 
                 index_p = self.spread_selection_strategy(previous_f_list, previous_visited)
                 previous_visited[index_p] = True
 
-                x_p = previous_p_list[index_p, :]
-                f_p = previous_f_list[index_p, :]
+                x_p = np.copy(previous_p_list[index_p, :])
+                f_p = np.copy(previous_f_list[index_p, :])
                 
                 previous_f_list_by_support = previous_f_list[np.where(previous_idx_point_to_support == previous_idx_point_to_support[index_p])[0], :]
 
@@ -113,6 +113,8 @@ class IFSDAdaptation(ExtendedGradientBasedAlgorithm):
                         idx_point_to_support_by_support = np.concatenate((idx_point_to_support_by_support[efficient_point_idx], np.array([previous_idx_point_to_support[index_p]])))
 
                         x_p = np.copy(new_x_p)
+
+                        previous_f_list_by_support[np.where((previous_f_list_by_support == f_p).all(axis=1))[0][0], :] = np.copy(new_f_p)
                         f_p = np.copy(new_f_p)
 
                         J_p = problem.evaluate_functions_jacobian(x_p)
@@ -126,7 +128,7 @@ class IFSDAdaptation(ExtendedGradientBasedAlgorithm):
                     if self.evaluate_stopping_conditions() or self.existsDominatingPoint(f_p, f_list_by_support) or crowding_list[np.where((previous_f_list_by_support == f_p).all(axis=1))[0][0]] < crowding_quantile:
                         break
 
-                    partial_d_p, partial_theta_p = self._direction_solver.computeDirection(problem, J_p[I_k, ], x_p=x_p, subspace_support=super_support_sets[previous_idx_point_to_support[index_p]], time_limit=self._max_time - time.time() + self.get_stopping_condition_current_value('max_time'))
+                    partial_d_p, partial_theta_p = self._direction_solver.compute_direction(problem, J_p[I_k, ], x_p=x_p, subspace_support=super_support_sets[previous_idx_point_to_support[index_p]], time_limit=self._max_time - time.time() + self.get_stopping_condition_current_value('max_time'))
 
                     if not self.evaluate_stopping_conditions() and partial_theta_p < self._theta_tol:
 

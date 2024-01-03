@@ -94,6 +94,6 @@ class MOIHT(ExtendedGradientBasedAlgorithm):
         self.output_data(f_list)
         self.close_figure()
 
-        p_list, f_list, _ = self.callRefiner(p_list, f_list, problem)
+        p_list, f_list, _ = self.callRefiner(p_list[:index_p+(1 if index_p == len(p_list)-1 else 0)], f_list[:index_p+(1 if index_p == len(p_list)-1 else 0)], problem)
 
         return p_list, f_list, time.time() - self.get_stopping_condition_current_value('max_time')

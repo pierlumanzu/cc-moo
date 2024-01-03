@@ -25,8 +25,8 @@ class SubspaceSteepestDescentDSGurobiVersion(DDS, ExtendedGurobiSettings):
 
         try:
             model = Model("Subspace Steepest Descent Direction")
-            model.setParam("Method", self._gurobi_method)
             model.setParam("OutputFlag", self._gurobi_verbose)
+            model.setParam("Method", self._gurobi_method)
             model.setParam("FeasibilityTol", self._gurobi_feasibility_tol)
             if time_limit is not None:
                 model.setParam("TimeLimit", max(time_limit, 0))

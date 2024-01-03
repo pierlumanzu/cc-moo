@@ -27,7 +27,7 @@ class ExtendedGradientBasedAlgorithm(GradientBasedAlgorithm, ABC):
                                         True, gurobi_method, gurobi_verbose,
                                         0., 0., 0., 0.)
 
-        self._max_time = max_time
+        self._max_time = max_time * 60 if max_time is not None else np.inf
 
         self._direction_solver = Direction_Descent_Factory.getDirectionCalculator(name_DDS, gurobi_method, gurobi_verbose, gurobi_feasibility_tol) if name_DDS is not None else None
         self._line_search = Line_Search_Factory.getLineSearch(name_ALS, ALS_alpha_0, ALS_delta, ALS_beta, ALS_min_alpha) if name_ALS is not None else None
@@ -52,7 +52,7 @@ class ExtendedGradientBasedAlgorithm(GradientBasedAlgorithm, ABC):
         return (np.logical_and(np.sum(dominance_matrix <= 0, axis=1) == n_obj, np.sum(dominance_matrix < 0, axis=1) > 0)).any()
 
     def callRefiner(self, p_list, f_list, problem):
-        assert self._refiner_instance is not None
-
-        
-        return self._refiner_instance.search(p_list, f_list, problem)
+        if self._refiner_instance is not None:
+            return self._refiner_instance.search(p_list, f_list, problem)
+        else:
+            return p_list, f_list, 0

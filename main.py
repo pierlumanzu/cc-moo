@@ -65,63 +65,59 @@ if __name__ == '__main__':
             args_file_creation(date, seed, args)
             execution_time_file_initialization(date, seed, single_point_methods_names, refiner)
 
-        for L in prob_settings['L']:
-            print()
-            print('L: ', str(L) if L > 0 else 'Not Specified')
+        for prob_path in prob_paths:
+            for s in sparsity_settings['s']:
+                for idx_single_point_method, single_point_method_name in enumerate(single_point_methods_names):
 
-            for prob_path in prob_paths:
-                for s in sparsity_settings['s']:
-                    for idx_single_point_method, single_point_method_name in enumerate(single_point_methods_names):
+                    session = tf.compat.v1.Session()
+                    with session.as_default():
 
-                        session = tf.compat.v1.Session()
-                        with session.as_default():
-
-                            problem_instance = Problem_Factory.get_problem(prob_settings['prob_type'],
-                                                                           prob_path=prob_path,
-                                                                           s=s,
-                                                                           sparsity_tol=sparsity_settings['sparsity_tol'])
-                            
-                            if not idx_single_point_method:
-                                print()
-                                print('Problem Type: ', problem_instance.family_name())
-                                print('Problem Path: ', problem_instance.name())
-                                print('Problem Dimensionality: ', problem_instance.n)
-                                print('Upper Bound for Cardinality Constraint: ', sparsity_settings['s'])
-
-                            algorithm = Algorithm_Factory.get_algorithm(single_point_method_name,
-                                                                        general_settings=general_settings,
-                                                                        algorithms_settings=algorithms_settings,
-                                                                        refiner=refiner,
-                                                                        DDS_settings=DDS_settings,
-                                                                        ALS_settings=ALS_settings)
-
+                        problem_instance = Problem_Factory.get_problem(prob_settings['prob_type'],
+                                                                        prob_path=prob_path,
+                                                                        s=s,
+                                                                        sparsity_tol=sparsity_settings['sparsity_tol'])
+                        
+                        if not idx_single_point_method:
                             print()
-                            print('Single Point Method: ', single_point_method_name)
-                            print('Refiner: ', refiner)
+                            print('Problem Type: ', problem_instance.family_name())
+                            print('Problem Path: ', problem_instance.name())
+                            print('Problem Dimensionality: ', problem_instance.n)
+                            print('Upper Bound for Cardinality Constraint: ', s)
 
-                            np.random.seed(seed=seed)
-                            initial_p_list, initial_f_list, n_initial_points = pointsInitialization(problem_instance, seed)
+                        algorithm = Algorithm_Factory.get_algorithm(single_point_method_name,
+                                                                    general_settings=general_settings,
+                                                                    algorithms_settings=algorithms_settings,
+                                                                    refiner=refiner,
+                                                                    DDS_settings=DDS_settings,
+                                                                    ALS_settings=ALS_settings)
 
-                            problem_instance.evaluate_functions(initial_p_list[0, :])
-                            problem_instance.evaluate_functions_jacobian(initial_p_list[0, :])       
+                        print()
+                        print('Single Point Method: ', single_point_method_name)
+                        print('Refiner: ', refiner)
 
-                            p_list, f_list, elapsed_time = algorithm.search(initial_p_list, initial_f_list, problem_instance)
-                            
-                            final_p_list, final_f_list = pointsPostprocessing(p_list, f_list, problem_instance)
+                        np.random.seed(seed=seed)
+                        initial_p_list, initial_f_list, n_initial_points = pointsInitialization(problem_instance, seed)
 
-                            if general_settings['plot_pareto_front']:
-                                graphical_plot = GraphicalPlot(general_settings['plot_pareto_solutions'], general_settings['plot_dpi'])
-                                graphical_plot.show_figure(final_p_list, final_f_list, hold_still=True)
-                                graphical_plot.close_figure()
+                        problem_instance.evaluate_functions(initial_p_list[0, :])
+                        problem_instance.evaluate_functions_jacobian(initial_p_list[0, :])       
 
-                            if general_settings['general_export']:
-                                write_in_execution_time_file(date, seed, single_point_method_name, refiner, problem_instance, elapsed_time)
-                                write_results_in_csv_file(date, seed, single_point_method_name, refiner, problem_instance, final_p_list, final_f_list, export_pareto_solutions=general_settings['export_pareto_solutions'])
-                                save_plots(date, seed, single_point_method_name, refiner, problem_instance, final_p_list, final_f_list, general_settings['export_pareto_solutions'], general_settings['plot_dpi'])
+                        p_list, f_list, elapsed_time = algorithm.search(initial_p_list, initial_f_list, problem_instance)
+                        
+                        final_p_list, final_f_list = pointsPostprocessing(p_list, f_list, problem_instance)
 
-                            if general_settings['verbose']:
-                                progress_bar.increment_current_value()
-                                progress_bar.show_bar()
+                        if general_settings['plot_pareto_front']:
+                            graphical_plot = GraphicalPlot(general_settings['plot_pareto_solutions'], general_settings['plot_dpi'])
+                            graphical_plot.show_figure(final_p_list, final_f_list, hold_still=True)
+                            graphical_plot.close_figure()
 
-                            tf.compat.v1.reset_default_graph()
-                            session.close()
+                        if general_settings['general_export']:
+                            write_in_execution_time_file(date, seed, single_point_method_name, refiner, problem_instance, elapsed_time)
+                            write_results_in_csv_file(date, seed, single_point_method_name, refiner, problem_instance, final_p_list, final_f_list, export_pareto_solutions=general_settings['export_pareto_solutions'])
+                            save_plots(date, seed, single_point_method_name, refiner, problem_instance, final_p_list, final_f_list, general_settings['export_pareto_solutions'], general_settings['plot_dpi'])
+
+                        if general_settings['verbose']:
+                            progress_bar.increment_current_value()
+                            progress_bar.show_bar()
+
+                        tf.compat.v1.reset_default_graph()
+                        session.close()

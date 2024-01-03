@@ -52,7 +52,7 @@ class MOSPD(ExtendedGradientBasedAlgorithm):
                                                 plot_pareto_front, plot_pareto_solutions, plot_dpi,
                                                 0.,
                                                 gurobi_method, gurobi_verbose, gurobi_feasibility_tol,
-                                                0., 0., 0., 0.,
+                                                ALS_alpha_0, ALS_delta, ALS_beta, ALS_min_alpha,
                                                 name_DDS='Subspace_Steepest_Descent_DS', name_ALS='MOALS', refiner_instance=refiner_instance)
 
         self.__xy_diff = xy_diff
@@ -155,7 +155,7 @@ class MOSPD(ExtendedGradientBasedAlgorithm):
         self.output_data(f_list)
         self.close_figure()
 
-        p_list, f_list, _ = self.callRefiner(p_list, f_list, problem)
+        p_list, f_list, _ = self.callRefiner(p_list[:index_p+(1 if index_p == len(p_list)-1 else 0)], f_list[:index_p+(1 if index_p == len(p_list)-1 else 0)], problem)
 
         return p_list, f_list, time.time() - self.get_stopping_condition_current_value('max_time')
 

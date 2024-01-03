@@ -10,10 +10,10 @@ class ExtendedProblem(Problem, ABC):
 
         Problem.__init__(self, n)
 
-        self.__lb_for_ini = np.array([-np.inf] * self.__n, dtype=float)
-        self.__filtered_lb_for_ini = np.array([-2.0e19] * self.__n, dtype=float)
-        self.__ub_for_ini = np.array([np.inf] * self.__n, dtype=float)
-        self.__filtered_ub_for_ini = np.array([2.0e19] * self.__n, dtype=float)
+        self.__lb_for_ini = np.array([-np.inf] * self.n, dtype=float)
+        self.__filtered_lb_for_ini = np.array([-2.0e19] * self.n, dtype=float)
+        self.__ub_for_ini = np.array([np.inf] * self.n, dtype=float)
+        self.__filtered_ub_for_ini = np.array([2.0e19] * self.n, dtype=float)
 
         self.__s = s
         self.__sparsity_tol = sparsity_tol
@@ -25,10 +25,10 @@ class ExtendedProblem(Problem, ABC):
         assert seed is not None
 
         rng = np.random.default_rng(seed)
-        p_list = np.zeros((size, self.__n), dtype=float)
+        p_list = np.zeros((size, self.n), dtype=float)
         for i in range(size):
             p_list[i, :] = np.random.uniform(self.__filtered_lb_for_ini, self.__filtered_ub_for_ini)
-            p_list[i, rng.choice(self.__n, size=self.__n - self.__s, replace=False)] = 0.
+            p_list[i, rng.choice(self.n, size=self.n - self.__s, replace=False)] = 0.
 
         return p_list
 
@@ -38,7 +38,7 @@ class ExtendedProblem(Problem, ABC):
 
     @lb_for_ini.setter
     def lb_for_ini(self, lb_for_ini):
-        assert len(lb_for_ini) == self.__n
+        assert len(lb_for_ini) == self.n
         assert not np.isnan(np.sum(lb_for_ini))
         assert (lb_for_ini != np.inf).all()
 
@@ -53,7 +53,7 @@ class ExtendedProblem(Problem, ABC):
 
     @ub_for_ini.setter
     def ub_for_ini(self, ub_for_ini):
-        assert len(ub_for_ini) == self.__n
+        assert len(ub_for_ini) == self.n
         assert not np.isnan(np.sum(ub_for_ini))
         assert (ub_for_ini != -np.inf).all()
 

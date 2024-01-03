@@ -14,7 +14,7 @@ def print_parameters(args):
 
 def check_args(args):
 
-    assert len(args.single_methods) > 0
+    assert len(args.single_point_methods) > 0
     assert os.path.isfile(args.prob_path) or os.path.isdir(args.prob_path)
     for seed in args.seeds:
         assert seed > 0
@@ -36,7 +36,7 @@ def check_args(args):
 
     assert args.MOSPD_xy_diff >= 0
     assert args.MOSPD_max_inner_iter_count > 0
-    assert args.MOSPD_max_mopgd_iters > 0
+    assert args.MOSPD_max_MOSD_iters > 0
     assert args.MOSPD_tau_0 >= 0
     assert args.MOSPD_max_tau_0_inc_factor > args.MOSPD_tau_inc_factor
     assert args.MOSPD_tau_inc_factor > 1
@@ -60,11 +60,11 @@ def args_preprocessing(args):
     check_args(args)
 
     single_point_methods_names = []
-    if 'MOIHT' in args.single_methods:
+    if 'MOIHT' in args.single_point_methods:
         single_point_methods_names.append('MOIHT')
-    if 'MOSPD' in args.single_methods:
+    if 'MOSPD' in args.single_point_methods:
         single_point_methods_names.append('MOSPD')
-    if 'MOHyb' in args.single_methods:
+    if 'MOHyb' in args.single_point_methods:
         single_point_methods_names.append('MOHyb')
     refiner = args.refiner
 

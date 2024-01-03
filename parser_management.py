@@ -12,7 +12,7 @@ def get_args():
 
     parser.add_argument('--prob_type', type=str, help='problems Type', choices=['QP'])
 
-    parser.add_argument('--prob_path', help='problems path (folder or file)', type=str)
+    parser.add_argument('--prob_path', help='problems path (folder or file); note that, for the QP-type problems, you must indicate one of the two involved problems: the one finishing with the string _a or the one finishing with _b', type=str)
 
     parser.add_argument('--seeds', help='Execution Seeds', nargs='+', type=int, default=[16007])
 

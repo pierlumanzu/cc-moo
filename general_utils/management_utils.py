@@ -44,14 +44,14 @@ def write_results_in_csv_file(date: str, seed: int, single_point_method_name: st
     assert len(p_list) == len(f_list)
     n = p_list.shape[1]
 
-    f_list_file = open(os.path.join('Execution_Outputs', date, str(seed), 'Csv', '{}-{}'.format(single_point_method_name, refiner), '{}_{}_{}_{}_pareto_front.csv'.format(problem_instance.name(), n, str(round(np.max(problem_instance.L), 3)), str(problem_instance.s))), 'w')
+    f_list_file = open(os.path.join('Execution_Outputs', date, str(seed), 'Csv', '{}-{}'.format(single_point_method_name, refiner), '{}_L{}_s{}_pareto_front.csv'.format(problem_instance.name().split('/')[-1].replace('.pkl', ''), str(round(np.max(problem_instance.L), 3)), str(problem_instance.s))), 'w')
     if len(f_list):
         for i in range(f_list.shape[0]):
             f_list_file.write(';'.join([str(el) for el in f_list[i, :]]) + '\n')
     f_list_file.close()
 
     if export_pareto_solutions:
-        p_list_file = open(os.path.join('Execution_Outputs', date, str(seed), 'Csv', '{}-{}'.format(single_point_method_name, refiner), '{}_{}_{}_{}_pareto_solutions.csv'.format(problem_instance.name(), n, str(round(np.max(problem_instance.L), 3)), str(problem_instance.s))), 'w')
+        p_list_file = open(os.path.join('Execution_Outputs', date, str(seed), 'Csv', '{}-{}'.format(single_point_method_name, refiner), '{}_L{}_s{}_pareto_solutions.csv'.format(problem_instance.name().split('/')[-1], str(round(np.max(problem_instance.L), 3)), str(problem_instance.s))), 'w')
         if len(p_list):
             for i in range(p_list.shape[0]):
                 p_list_file.write(';'.join([str(el) for el in p_list[i, :]]) + '\n')
@@ -62,4 +62,4 @@ def save_plots(date: str, seed: int, single_point_method_name: str, refiner: str
     assert len(p_list) == len(f_list)
 
     graphical_plot = GraphicalPlot(export_pareto_solutions, plot_dpi)
-    graphical_plot.save_figure(p_list, f_list, os.path.join('Execution_Outputs', date, str(seed), 'Plot'), '{}-{}'.format(single_point_method_name, refiner), problem_instance.name())
+    graphical_plot.save_figure(p_list, f_list, os.path.join('Execution_Outputs', date, str(seed), 'Plot'), '{}-{}'.format(single_point_method_name, refiner), '{}_L{}_s{}'.format(problem_instance.name().split('/')[-1], str(round(np.max(problem_instance.L), 3)), str(problem_instance.s)))
