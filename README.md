@@ -58,7 +58,7 @@ pip install nsma
 
 ##### Gurobi Optimizer
 
-In order to run some parts of the code, the [Gurobi](https://www.gurobi.com/) Optimizer (Version 9) needs to be installed and, in addition, a valid Gurobi licence is required. The code was experimented with the Gurobi-related library ```gurobipy v9.5.2```.
+In order to run some parts of the code, the [Gurobi](https://www.gurobi.com/) Optimizer (Version 9 or higher) needs to be installed and, in addition, a valid Gurobi licence is required. The code was experimented with the Gurobi-related library ```gurobipy v9.5.2```.
 
 ### Usage
 
