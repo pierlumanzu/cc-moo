@@ -5,19 +5,19 @@ from nsma.general_utils.pareto_utils import pareto_efficient
 from nsma.algorithms.genetic.genetic_utils.general_utils import calc_crowding_distance
 
 from algorithms.gradient_based.extended_gradient_based_algorithm import ExtendedGradientBasedAlgorithm
-from direction_solvers.direction_solver_factory import Direction_Descent_Factory
-from line_searches.line_search_factory import Line_Search_Factory
+from direction_solvers.direction_solver_factory import DirectionDescentFactory
+from line_searches.line_search_factory import LineSearchFactory
 from problems.extended_problem import ExtendedProblem
 
 
 class IFSDAdaptation(ExtendedGradientBasedAlgorithm):
 
     def __init__(self,
-                 max_time, max_f_evals,
-                 verbose, verbose_interspace,
-                 plot_pareto_front, plot_pareto_solutions, plot_dpi,
-                 theta_tol, qth_quantile,
-                 gurobi_method, gurobi_verbose, gurobi_feasibility_tol,
+                 max_time: float, max_f_evals: int,
+                 verbose: bool, verbose_interspace: int,
+                 plot_pareto_front: bool, plot_pareto_solutions: bool, plot_dpi: int,
+                 theta_tol: float, qth_quantile: float,
+                 gurobi_method: int, gurobi_verbose: bool, gurobi_feasibility_tol: float,
                  ALS_alpha_0: float, ALS_delta: float, ALS_beta: float, ALS_min_alpha: float):
 
         ExtendedGradientBasedAlgorithm.__init__(self,
@@ -29,13 +29,13 @@ class IFSDAdaptation(ExtendedGradientBasedAlgorithm):
                                                 ALS_alpha_0, ALS_delta, ALS_beta, ALS_min_alpha,
                                                 name_DDS='Subspace_Steepest_Descent_DS', name_ALS='Boundconstrained_Front_ALS')
 
-        self.__single_point_line_search = Line_Search_Factory.getLineSearch('MOALS', ALS_alpha_0, ALS_delta, ALS_beta, ALS_min_alpha)
+        self.__single_point_line_search = LineSearchFactory.get_line_search('MOALS', ALS_alpha_0, ALS_delta, ALS_beta, ALS_min_alpha)
 
         self.__qth_quantile = qth_quantile
 
-        self.__additional_direction_solver = Direction_Descent_Factory.getDirectionCalculator('Feasible_Steepest_Descent_DS', gurobi_method, gurobi_verbose, gurobi_feasibility_tol)
+        self.__additional_direction_solver = DirectionDescentFactory.get_direction_calculator('Feasible_Steepest_Descent_DS', gurobi_method, gurobi_verbose, gurobi_feasibility_tol)
 
-    def search(self, p_list, f_list, problem: ExtendedProblem):
+    def search(self, p_list: np.array, f_list: np.array, problem: ExtendedProblem):
 
         self.update_stopping_condition_current_value('max_time', time.time())
 
@@ -74,7 +74,7 @@ class IFSDAdaptation(ExtendedGradientBasedAlgorithm):
                 f_list_by_support = f_list[idx_idx_point_to_support_by_support, :]
                 idx_point_to_support_by_support = idx_point_to_support[idx_idx_point_to_support_by_support]
 
-                if self.existsDominatingPoint(f_p, f_list_by_support):
+                if self.exists_dominating_point(f_p, f_list_by_support):
                     continue
 
                 crowding_list = calc_crowding_distance(previous_f_list_by_support)
@@ -85,7 +85,7 @@ class IFSDAdaptation(ExtendedGradientBasedAlgorithm):
                 else:
                     crowding_quantile = np.inf
 
-                power_set = self.objectivesPowerset(problem.m)
+                power_set = self.objectives_powerset(problem.m)
 
                 J_p = problem.evaluate_functions_jacobian(x_p)
                 self.add_to_stopping_condition_current_value('max_f_evals', problem.n)
@@ -125,7 +125,7 @@ class IFSDAdaptation(ExtendedGradientBasedAlgorithm):
 
                 for I_k in power_set:
 
-                    if self.evaluate_stopping_conditions() or self.existsDominatingPoint(f_p, f_list_by_support) or crowding_list[np.where((previous_f_list_by_support == f_p).all(axis=1))[0][0]] < crowding_quantile:
+                    if self.evaluate_stopping_conditions() or self.exists_dominating_point(f_p, f_list_by_support) or crowding_list[np.where((previous_f_list_by_support == f_p).all(axis=1))[0][0]] < crowding_quantile:
                         break
 
                     partial_d_p, partial_theta_p = self._direction_solver.compute_direction(problem, J_p[I_k, ], x_p=x_p, subspace_support=super_support_sets[previous_idx_point_to_support[index_p]], time_limit=self._max_time - time.time() + self.get_stopping_condition_current_value('max_time'))
@@ -161,7 +161,7 @@ class IFSDAdaptation(ExtendedGradientBasedAlgorithm):
 
         return p_list, f_list, time.time() - self.get_stopping_condition_current_value('max_time')
 
-    def find_super_support_sets(self, p_list, f_list, problem: ExtendedProblem):
+    def find_super_support_sets(self, p_list: np.array, f_list: np.array, problem: ExtendedProblem):
         random.seed(16007)
 
         super_support_sets = []
@@ -235,7 +235,7 @@ class IFSDAdaptation(ExtendedGradientBasedAlgorithm):
         return super_support_sets, idx_point_to_support
 
     @staticmethod
-    def spread_selection_strategy(f_list, visited):
+    def spread_selection_strategy(f_list: np.array, visited: np.array):
         n_points, m = f_list.shape
         distances = [0] * n_points
 

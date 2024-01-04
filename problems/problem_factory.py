@@ -1,9 +1,9 @@
 from problems.quadratic.qp import QP
 
 
-class Problem_Factory:
+class ProblemFactory:
     @staticmethod
-    def get_problem(problem_type, **kwargs):
+    def get_problem(problem_type: str, **kwargs):
 
         if problem_type == 'QP':
 

@@ -2,30 +2,46 @@
 [![license](https://img.shields.io/badge/license-apache_2.0-orange.svg)](https://opensource.org/licenses/Apache-2.0)
 TODO ZENODO
 
-TODO IMMAGINI
 <p>
-  <img src="README_Front_Image_1.gif" width="49%" />
-  <img src="README_Front_Image_2.gif" width="49%" /> 
+  <img src="README_img/MOIHT_Image.gif" width="49%" />
+  <img src="README_img/SFSD_Image.gif" width="49%" /> 
 </p>
 
-## MOIHT & SFSD -- Algorithms for Cardinality-Constrained Multi-Objective Optimization Problems
+## Algorithms for Cardinality-Constrained Multi-Objective Optimization Problems
 
-Implementation of the MOIHT and the SFSD algorithms proposed in
+Implementation of the MOIHT/MOHyb algorithms and the SFSD methodology proposed in
 
-[Lapucci, M. & Mansueto, P., Cardinality-Constrained Multi-Objective Optimization: Novel Optimality Conditions and Algorithms. arXiv Pre-Print (2023).](
+[Lapucci, M. & Mansueto, P., Cardinality-Constrained Multi-Objective Optimization: Novel Optimality Conditions and Algorithms. arXiv Pre-Print (2023)](
 https://doi.org/10.48550/arXiv.2304.02369)
 
-If you have used our code for research purposes, please cite the publication mentioned above.
+and of the MOSPD algorithm introduced in 
+
+[Lapucci, M., A penalty decomposition approach for multi-objective cardinality-constrained optimization problems. Optimization Methods and Software (2022).](
+https://doi.org/10.1080/10556788.2022.2060972)
+
+If you have used our code for research purposes, please cite the publications mentioned above.
 For the sake of simplicity, we provide the Bibtex format:
 
 ```
-@misc{lapucci2023cardinalityconstrained,
+@misc{lapuccimansueto_cardinalityconstrained_2023,
       title={Cardinality-Constrained Multi-Objective Optimization: Novel Optimality Conditions and Algorithms}, 
       author={Matteo Lapucci and Pierluigi Mansueto},
       year={2023},
       eprint={2304.02369},
       archivePrefix={arXiv},
       primaryClass={math.OC}
+}
+
+@article{lapucci_penaltydecomposition_2022,
+         author = {Matteo Lapucci},
+         title = {A penalty decomposition approach for multi-objective cardinality-constrained optimization problems},
+         journal = {Optimization Methods and Software},
+         volume = {37},
+         number = {6},
+         pages = {2157-2189},
+         year = {2022},
+         publisher = {Taylor & Francis},
+         doi = {10.1080/10556788.2022.2060972}
 }
 
 ```
@@ -37,16 +53,18 @@ In order to execute the code, you need an [Anaconda](https://www.anaconda.com/) 
 For the package installation, open a terminal (Anaconda Prompt for Windows users) in the project root folder and execute the following command. Note that a Python version 3.9 or higher is required.
 
 ```
-pip install nsma/scikit
+pip install nsma
 ```
 
 ##### Gurobi Optimizer
 
-In order to run some parts of the code, the [Gurobi](https://www.gurobi.com/) Optimizer needs to be installed and, in addition, a valid Gurobi licence is required.
+In order to run some parts of the code, the [Gurobi](https://www.gurobi.com/) Optimizer (Version 9) needs to be installed and, in addition, a valid Gurobi licence is required. The code was experimented with the Gurobi-related library ```gurobipy v9.5.2```.
 
 ### Usage
 
-TODO
+In ```parser_management.py``` you can find all the possible arguments. Given a terminal (Anaconda Prompt for Windows users), an example of execution could be the following.
+
+```python main.py --single_point_methods MOIHT --refiner SFSD --prob_type QP --prob_path test_QPs/QP_n25_k1_a.pkl --s 5 --max_time 2 --plot_pareto_front --general_export```
 
 ### Contact
 

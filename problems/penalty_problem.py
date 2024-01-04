@@ -5,7 +5,7 @@ from nsma.problems.problem import Problem
 
 class PenaltyProblem(Problem):
 
-    def __init__(self, problem: Problem, y_0, tau_0):
+    def __init__(self, problem: Problem, y_0: np.array, tau_0: float):
         Problem.__init__(self, problem.n)
 
         self.__problem = problem
@@ -13,10 +13,10 @@ class PenaltyProblem(Problem):
         self.__y = y_0
         self.__tau = tau_0
 
-    def evaluate_functions(self, x):
+    def evaluate_functions(self, x: np.array):
         return self.__problem.evaluate_functions(x) + self.__tau/2 * np.dot(x - self.__y, x - self.__y)
 
-    def evaluate_functions_jacobian(self, x):
+    def evaluate_functions_jacobian(self, x: np.array):
         functions_jacobian = self.__problem.evaluate_functions_jacobian(x)
         penalty_gradient = self.__tau * (x - self.__y)
 
@@ -72,7 +72,7 @@ class PenaltyProblem(Problem):
         return self.__y
 
     @y.setter
-    def y(self, y):
+    def y(self, y: np.array):
         self.__y = y
 
     @property
@@ -80,5 +80,5 @@ class PenaltyProblem(Problem):
         return self.__tau
 
     @tau.setter
-    def tau(self, tau):
+    def tau(self, tau: float):
         self.__tau = tau

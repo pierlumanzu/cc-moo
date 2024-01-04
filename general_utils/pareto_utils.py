@@ -6,8 +6,8 @@ from nsma.general_utils.pareto_utils import pareto_efficient
 from problems.extended_problem import ExtendedProblem
 
 
-def pointsInitialization(problem: ExtendedProblem, seed):
-    p_list = problem.generateFeasiblePoints('rand_sparse', 2 * problem.n, seed=seed)
+def points_initialization(problem: ExtendedProblem, seed: int):
+    p_list = problem.generate_feasible_points_array('rand_sparse', 2 * problem.n, seed=seed)
 
     n_initial_points = len(p_list)
     f_list = np.zeros((n_initial_points, problem.m), dtype=float)
@@ -17,14 +17,14 @@ def pointsInitialization(problem: ExtendedProblem, seed):
     return p_list, f_list, n_initial_points
 
 
-def pointsPostprocessing(p_list, f_list, problem):
+def points_postprocessing(p_list: np.array, f_list: np.array, problem: ExtendedProblem):
     assert len(p_list) == len(f_list)
     old_n_points, _ = p_list.shape
 
     for p in range(old_n_points):
         f_list[p, :] = problem.evaluate_functions(p_list[p, :])
 
-    p_list, f_list = removeDuplicatesPoint(p_list, f_list)
+    p_list, f_list = remove_duplicates_point(p_list, f_list)
 
     n_points, n = p_list.shape
 
@@ -53,7 +53,7 @@ def pointsPostprocessing(p_list, f_list, problem):
     return p_list, f_list
 
 
-def removeDuplicatesPoint(p_list, f_list):
+def remove_duplicates_point(p_list: np.array, f_list: np.array):
 
     is_duplicate = np.array([False] * p_list.shape[0])
 

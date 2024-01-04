@@ -10,7 +10,7 @@ class MOALS(ALS):
     def __init__(self, alpha_0: float, delta: float, beta: float, min_alpha: float):
         ALS.__init__(self, alpha_0, delta, beta, min_alpha)
 
-    def search(self, problem: ExtendedProblem, x: np.array, f: np.array, d: np.array, theta: float, I: np.array=None):
+    def search(self, problem: ExtendedProblem, x: np.array, f: np.array, d: np.array, theta: float, I: np.array = None):
         assert len(f.shape) == 1
         assert I is None
 

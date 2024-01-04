@@ -3,10 +3,10 @@ from algorithms.gradient_based.mospd import MOSPD
 from algorithms.gradient_based.mohyb import MOHyb
 
 
-class Algorithm_Factory:
+class AlgorithmFactory:
 
     @staticmethod
-    def get_algorithm(algorithm_name, **kwargs):
+    def get_algorithm(algorithm_name: str, **kwargs):
 
         general_settings = kwargs['general_settings']
 
@@ -57,6 +57,5 @@ class Algorithm_Factory:
 
         else:
             raise NotImplementedError
-
 
         return algorithm

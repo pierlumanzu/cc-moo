@@ -8,11 +8,11 @@ import glob
 
 from nsma.algorithms.algorithm_utils.graphical_plot import GraphicalPlot
 
-from algorithms.algorithm_factory import Algorithm_Factory
-from problems.problem_factory import Problem_Factory
+from algorithms.algorithm_factory import AlgorithmFactory
+from problems.problem_factory import ProblemFactory
 from general_utils.args_utils import print_parameters, args_preprocessing, args_file_creation
 from general_utils.management_utils import folder_initialization, execution_time_file_initialization, write_in_execution_time_file, write_results_in_csv_file, save_plots
-from general_utils.pareto_utils import pointsInitialization, pointsPostprocessing
+from general_utils.pareto_utils import points_initialization, points_postprocessing
 from general_utils.progress_bar import ProgressBarWrapper
 from parser_management import get_args
 
@@ -48,7 +48,6 @@ if __name__ == '__main__':
     print('N° Seeds: ', len(general_settings['seeds']))
     print()
 
-
     date = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
 
     if general_settings['verbose']:
@@ -72,10 +71,10 @@ if __name__ == '__main__':
                     session = tf.compat.v1.Session()
                     with session.as_default():
 
-                        problem_instance = Problem_Factory.get_problem(prob_settings['prob_type'],
-                                                                        prob_path=prob_path,
-                                                                        s=s,
-                                                                        sparsity_tol=sparsity_settings['sparsity_tol'])
+                        problem_instance = ProblemFactory.get_problem(prob_settings['prob_type'],
+                                                                      prob_path=prob_path,
+                                                                      s=s,
+                                                                      sparsity_tol=sparsity_settings['sparsity_tol'])
                         
                         if not idx_single_point_method:
                             print()
@@ -84,26 +83,26 @@ if __name__ == '__main__':
                             print('Problem Dimensionality: ', problem_instance.n)
                             print('Upper Bound for Cardinality Constraint: ', s)
 
-                        algorithm = Algorithm_Factory.get_algorithm(single_point_method_name,
-                                                                    general_settings=general_settings,
-                                                                    algorithms_settings=algorithms_settings,
-                                                                    refiner=refiner,
-                                                                    DDS_settings=DDS_settings,
-                                                                    ALS_settings=ALS_settings)
+                        algorithm = AlgorithmFactory.get_algorithm(single_point_method_name,
+                                                                   general_settings=general_settings,
+                                                                   algorithms_settings=algorithms_settings,
+                                                                   refiner=refiner,
+                                                                   DDS_settings=DDS_settings,
+                                                                   ALS_settings=ALS_settings)
 
                         print()
                         print('Single Point Method: ', single_point_method_name)
                         print('Refiner: ', refiner)
 
                         np.random.seed(seed=seed)
-                        initial_p_list, initial_f_list, n_initial_points = pointsInitialization(problem_instance, seed)
+                        initial_p_list, initial_f_list, n_initial_points = points_initialization(problem_instance, seed)
 
                         problem_instance.evaluate_functions(initial_p_list[0, :])
                         problem_instance.evaluate_functions_jacobian(initial_p_list[0, :])       
 
                         p_list, f_list, elapsed_time = algorithm.search(initial_p_list, initial_f_list, problem_instance)
                         
-                        final_p_list, final_f_list = pointsPostprocessing(p_list, f_list, problem_instance)
+                        final_p_list, final_f_list = points_postprocessing(p_list, f_list, problem_instance)
 
                         if general_settings['plot_pareto_front']:
                             graphical_plot = GraphicalPlot(general_settings['plot_pareto_solutions'], general_settings['plot_dpi'])

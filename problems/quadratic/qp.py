@@ -7,7 +7,7 @@ from problems.extended_problem import ExtendedProblem
 
 class QP(ExtendedProblem):
 
-    def __init__(self, problem_path, s, sparsity_tol):
+    def __init__(self, problem_path: str, s: int, sparsity_tol: float):
 
         self.__problem_path = problem_path
 
@@ -27,7 +27,7 @@ class QP(ExtendedProblem):
         self._L = max(np.linalg.norm(self.__Q_a, ord=2), np.linalg.norm(self.__Q_b, ord=2))
 
     @staticmethod
-    def load_QP_problem(problem_path):
+    def load_QP_problem(problem_path: str):
         loaded_problem = pickle.load(open(problem_path, "rb"))
         return loaded_problem['Q'], loaded_problem['c']
 

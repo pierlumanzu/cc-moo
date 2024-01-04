@@ -40,7 +40,7 @@ def write_in_execution_time_file(date: str, seed: int, single_point_method_name:
     execution_time_file.close()
 
 
-def write_results_in_csv_file(date: str, seed: int, single_point_method_name: str, refiner: str, problem_instance: ExtendedProblem, p_list: np.array, f_list: np.array, export_pareto_solutions=False):
+def write_results_in_csv_file(date: str, seed: int, single_point_method_name: str, refiner: str, problem_instance: ExtendedProblem, p_list: np.array, f_list: np.array, export_pareto_solutions: bool = False):
     assert len(p_list) == len(f_list)
     n = p_list.shape[1]
 
@@ -58,7 +58,7 @@ def write_results_in_csv_file(date: str, seed: int, single_point_method_name: st
         p_list_file.close()
 
 
-def save_plots(date: str, seed: int, single_point_method_name: str, refiner: str, problem_instance: ExtendedProblem, p_list: np.array, f_list: np.array, export_pareto_solutions, plot_dpi):
+def save_plots(date: str, seed: int, single_point_method_name: str, refiner: str, problem_instance: ExtendedProblem, p_list: np.array, f_list: np.array, export_pareto_solutions: bool, plot_dpi: int):
     assert len(p_list) == len(f_list)
 
     graphical_plot = GraphicalPlot(export_pareto_solutions, plot_dpi)

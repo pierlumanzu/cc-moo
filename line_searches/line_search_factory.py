@@ -3,10 +3,10 @@ from nsma.line_searches.armijo_type.boundconstrained_front_als import Boundconst
 from line_searches.armijo_type.mo_als import MOALS
 
 
-class Line_Search_Factory:
+class LineSearchFactory:
 
     @staticmethod
-    def getLineSearch(line_search_type, alpha_0, delta, beta, min_alpha):
+    def get_line_search(line_search_type: str, alpha_0: float, delta: float, beta: float, min_alpha: float):
 
         if line_search_type == 'Boundconstrained_Front_ALS':
             return BoundconstrainedFrontALS(alpha_0, delta, beta, min_alpha)

@@ -9,11 +9,11 @@ from problems.extended_problem import ExtendedProblem
 
 class MOIHTDSGurobiVersion(DDS, ExtendedGurobiSettings):
 
-    def __init__(self, gurobi_method, gurobi_verbose, gurobi_feasibility_tol):
+    def __init__(self, gurobi_method: int, gurobi_verbose: bool, gurobi_feasibility_tol: float):
         DDS.__init__(self)
         ExtendedGurobiSettings.__init__(self, gurobi_method, gurobi_verbose, gurobi_feasibility_tol)
 
-    def compute_direction(self, problem: ExtendedProblem, Jac, x_p=None, L=None, time_limit=None):
+    def compute_direction(self, problem: ExtendedProblem, Jac: np.array, x_p: np.array = None, L: float = None, time_limit: float = None):
         assert x_p is not None
         assert L is not None
 

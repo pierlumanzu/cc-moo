@@ -6,7 +6,7 @@ from nsma.problems.problem import Problem
 
 class ExtendedProblem(Problem, ABC):
 
-    def __init__(self, n, s, sparsity_tol):
+    def __init__(self, n: int, s: int, sparsity_tol: float):
 
         Problem.__init__(self, n)
 
@@ -20,7 +20,7 @@ class ExtendedProblem(Problem, ABC):
 
         self._L = None
 
-    def generateFeasiblePoints(self, mod, size, seed=None):
+    def generate_feasible_points_array(self, mod: str, size: int, seed: int = None):
         assert mod.lower() == 'rand_sparse'
         assert seed is not None
 
@@ -37,7 +37,7 @@ class ExtendedProblem(Problem, ABC):
         return self.__lb_for_ini
 
     @lb_for_ini.setter
-    def lb_for_ini(self, lb_for_ini):
+    def lb_for_ini(self, lb_for_ini: np.array):
         assert len(lb_for_ini) == self.n
         assert not np.isnan(np.sum(lb_for_ini))
         assert (lb_for_ini != np.inf).all()
@@ -52,7 +52,7 @@ class ExtendedProblem(Problem, ABC):
         return self.__ub_for_ini
 
     @ub_for_ini.setter
-    def ub_for_ini(self, ub_for_ini):
+    def ub_for_ini(self, ub_for_ini: np.array):
         assert len(ub_for_ini) == self.n
         assert not np.isnan(np.sum(ub_for_ini))
         assert (ub_for_ini != -np.inf).all()

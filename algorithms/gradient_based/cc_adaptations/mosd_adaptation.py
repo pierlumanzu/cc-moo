@@ -8,11 +8,11 @@ from problems.extended_problem import ExtendedProblem
 class MOSDAdaptation(ExtendedGradientBasedAlgorithm):
 
     def __init__(self,
-                 max_time, max_f_evals,
-                 verbose, verbose_interspace,
-                 plot_pareto_front, plot_pareto_solutions, plot_dpi,
-                 theta_tol,
-                 gurobi_method, gurobi_verbose, gurobi_feasibility_tol,
+                 max_time: float, max_f_evals: int,
+                 verbose: bool, verbose_interspace: int,
+                 plot_pareto_front: bool, plot_pareto_solutions: bool, plot_dpi: int,
+                 theta_tol: float,
+                 gurobi_method: int, gurobi_verbose: bool, gurobi_feasibility_tol: float,
                  ALS_alpha_0: float, ALS_delta: float, ALS_beta: float, ALS_min_alpha: float):
 
         ExtendedGradientBasedAlgorithm.__init__(self,
@@ -24,7 +24,7 @@ class MOSDAdaptation(ExtendedGradientBasedAlgorithm):
                                                 ALS_alpha_0, ALS_delta, ALS_beta, ALS_min_alpha,
                                                 name_DDS='Subspace_Steepest_Descent_DS', name_ALS='MOALS')
 
-    def search(self, p_list, f_list, problem: ExtendedProblem):
+    def search(self, p_list: np.array, f_list: np.array, problem: ExtendedProblem):
 
         self.update_stopping_condition_current_value('max_time', time.time())
 

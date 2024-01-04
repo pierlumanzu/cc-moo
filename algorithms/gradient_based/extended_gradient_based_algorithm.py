@@ -4,20 +4,21 @@ from abc import ABC
 from itertools import chain, combinations
 from nsma.algorithms.gradient_based.gradient_based_algorithm import GradientBasedAlgorithm
 
-from direction_solvers.direction_solver_factory import Direction_Descent_Factory
-from line_searches.line_search_factory import Line_Search_Factory
+from direction_solvers.direction_solver_factory import DirectionDescentFactory
+from line_searches.line_search_factory import LineSearchFactory
+from problems.extended_problem import ExtendedProblem
 
 
 class ExtendedGradientBasedAlgorithm(GradientBasedAlgorithm, ABC):
 
     def __init__(self,
-                 max_time, max_f_evals,
-                 verbose, verbose_interspace,
-                 plot_pareto_front, plot_pareto_solutions, plot_dpi,
-                 theta_tol,
-                 gurobi_method, gurobi_verbose, gurobi_feasibility_tol,
+                 max_time: float, max_f_evals: int,
+                 verbose: bool, verbose_interspace: int,
+                 plot_pareto_front: bool, plot_pareto_solutions: bool, plot_dpi: int,
+                 theta_tol: float,
+                 gurobi_method: int, gurobi_verbose: bool, gurobi_feasibility_tol: float,
                  ALS_alpha_0: float, ALS_delta: float, ALS_beta: float, ALS_min_alpha: float,
-                 name_DDS=None, name_ALS=None, refiner_instance: GradientBasedAlgorithm = None):
+                 name_DDS: str = None, name_ALS: str = None, refiner_instance: GradientBasedAlgorithm = None):
 
         GradientBasedAlgorithm.__init__(self,
                                         np.inf, max_time, max_f_evals,
@@ -29,17 +30,17 @@ class ExtendedGradientBasedAlgorithm(GradientBasedAlgorithm, ABC):
 
         self._max_time = max_time * 60 if max_time is not None else np.inf
 
-        self._direction_solver = Direction_Descent_Factory.getDirectionCalculator(name_DDS, gurobi_method, gurobi_verbose, gurobi_feasibility_tol) if name_DDS is not None else None
-        self._line_search = Line_Search_Factory.getLineSearch(name_ALS, ALS_alpha_0, ALS_delta, ALS_beta, ALS_min_alpha) if name_ALS is not None else None
+        self._direction_solver = DirectionDescentFactory.get_direction_calculator(name_DDS, gurobi_method, gurobi_verbose, gurobi_feasibility_tol) if name_DDS is not None else None
+        self._line_search = LineSearchFactory.get_line_search(name_ALS, ALS_alpha_0, ALS_delta, ALS_beta, ALS_min_alpha) if name_ALS is not None else None
         self._refiner_instance = refiner_instance if refiner_instance is not None else None
 
     @staticmethod
-    def objectivesPowerset(m):
+    def objectives_powerset(m: int):
         s = list(range(m))
         return list(chain.from_iterable(combinations(s, r) for r in range(1, len(s) + 1)))
 
     @staticmethod
-    def existsDominatingPoint(f, f_list):
+    def exists_dominating_point(f: np.array, f_list: np.array):
 
         if np.isnan(f).any():
             return True
@@ -51,7 +52,7 @@ class ExtendedGradientBasedAlgorithm(GradientBasedAlgorithm, ABC):
 
         return (np.logical_and(np.sum(dominance_matrix <= 0, axis=1) == n_obj, np.sum(dominance_matrix < 0, axis=1) > 0)).any()
 
-    def callRefiner(self, p_list, f_list, problem):
+    def call_refiner(self, p_list: np.array, f_list: np.array, problem: ExtendedProblem):
         if self._refiner_instance is not None:
             return self._refiner_instance.search(p_list, f_list, problem)
         else:
