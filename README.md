@@ -1,6 +1,6 @@
 [![Python 3.9](https://img.shields.io/badge/python-3.9-blue.svg)](https://www.python.org/downloads/release/python-309/)
 [![license](https://img.shields.io/badge/license-apache_2.0-orange.svg)](https://opensource.org/licenses/Apache-2.0)
-TODO ZENODO
+[![DOI](https://zenodo.org/badge/717109589.svg)](https://zenodo.org/doi/10.5281/zenodo.10473320)
 
 <p>
   <img src="README_img/MOIHT_Image.gif" width="49%" />
