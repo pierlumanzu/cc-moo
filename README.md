@@ -11,8 +11,8 @@
 
 Implementation of the MOIHT/MOHyb algorithms and the SFSD methodology proposed in
 
-[Lapucci, M. & Mansueto, P., Cardinality-Constrained Multi-Objective Optimization: Novel Optimality Conditions and Algorithms. arXiv Pre-Print (2023)](
-https://doi.org/10.48550/arXiv.2304.02369)
+[Lapucci, M. & Mansueto, P., Cardinality-Constrained Multi-Objective Optimization: Novel Optimality Conditions and Algorithms. Journal of Optimization Theory and Applications (2024)](
+https://doi.org/10.1007/s10957-024-02397-3)
 
 and of the MOSPD algorithm introduced in 
 
@@ -23,13 +23,16 @@ If you have used our code for research purposes, please cite the publications me
 For the sake of simplicity, we provide the Bibtex format:
 
 ```
-@misc{lapuccimansueto_cardinalityconstrained_2023,
-      title={Cardinality-Constrained Multi-Objective Optimization: Novel Optimality Conditions and Algorithms}, 
-      author={Matteo Lapucci and Pierluigi Mansueto},
-      year={2023},
-      eprint={2304.02369},
-      archivePrefix={arXiv},
-      primaryClass={math.OC}
+@article{Lapucci2024,
+         author={Lapucci, Matteo and Mansueto, Pierluigi},
+         title={Cardinality-Constrained Multi-objective Optimization: Novel Optimality Conditions and Algorithms},
+         journal={Journal of Optimization Theory and Applications},
+         year={2024},
+         month={Mar},
+         day={04},
+         issn={1573-2878},
+         doi={10.1007/s10957-024-02397-3},
+         url={https://doi.org/10.1007/s10957-024-02397-3}
 }
 
 @article{lapucci_penaltydecomposition_2022,
