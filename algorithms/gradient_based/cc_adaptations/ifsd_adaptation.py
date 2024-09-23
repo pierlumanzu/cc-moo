@@ -191,7 +191,7 @@ class IFSDAdaptation(ExtendedGradientBasedAlgorithm):
 
                         if not self.evaluate_stopping_conditions() and new_x_p is not None:
                             p_list[index_p, :] = new_x_p
-                            f_eval[index_p, :] = new_f_p
+                            f_list[index_p, :] = new_f_p
 
             support_p = list(np.where(np.abs(p_list[index_p, :]) >= problem.sparsity_tol)[0])
 
